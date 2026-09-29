@@ -9,5 +9,5 @@
 ## Checklist
 
 - [ ] `python3 scripts/check-skills.py` passes
-- [ ] `claude plugin validate . --strict` passes
+- [ ] `claude plugin validate plugin --strict` and `claude plugin validate . --strict` pass
 - [ ] `VERSION`, the plugin `version` and `CHANGELOG.md` are updated when behaviour changes

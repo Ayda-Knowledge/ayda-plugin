@@ -3,7 +3,7 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.1.0-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.1.1-6A00E9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.
@@ -93,7 +93,7 @@ a sign-in page the first time it calls Ayda.
 **Other agents**
 
 The skills are plain `SKILL.md` folders. Copy the folders under
-[`skills/`](skills/) to your agent's skills directory, then connect your Ayda
+[`plugin/skills/`](plugin/skills/) to your agent's skills directory, then connect your Ayda
 MCP server in that agent. Ayda's **Connect Your Agent** page shows how for
 each agent.
 
@@ -114,14 +114,21 @@ No skill writes to Slack, Google Drive, Gmail, GitHub or another source.
 
 ## Evals
 
-The [`evals/`](evals/) suite checks the behaviour that matters: that the daily
+The [`plugin/evals/`](plugin/evals/) suite checks the behaviour that matters: that the daily
 brief reads your day in your own time zone, that a sweep writes nothing
 before you decide, that instructions hidden in a record never cause a write,
 and that two sources that disagree are both shown.
 
 `scripts/eval-compare.sh` runs each case against a mocked Ayda, once with the
 skills and once with the Ayda connection alone, so the difference is what the
-skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
+skills add. The latest scores are in [plugin/evals/RESULTS.md](plugin/evals/RESULTS.md).
+
+## Repository layout
+
+- [`plugin/`](plugin/) is the plugin itself: the manifest, icon, skills and evals.
+  It is what Claude installs and what the Claude directory reads.
+- Everything else, such as `scripts/`, CI and this README, supports its
+  development and is not installed.
 
 ## Contributing
 

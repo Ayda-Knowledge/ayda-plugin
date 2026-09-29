@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Score the eval suite twice against the same mocked Ayda server: once with the
 # plugin's skills, once with only its MCP connection. The difference is what
-# the skills add. Writes evals/RESULTS.md.
+# the skills add. Writes plugin/evals/RESULTS.md.
 #
 # The built-in no-plugin baseline cannot measure this: without the plugin there
 # is no Ayda server at all, so every case fails for a reason the skills do not
 # cause.
 set -euo pipefail
 
-root=$(cd "$(dirname "$0")/.." && pwd)
+root=$(cd "$(dirname "$0")/../plugin" && pwd)
 runs=${RUNS:-3}
 model=${MODEL:-claude-sonnet-5-5}
 # The default small judge misreads long, nuanced replies; the docs advise a stronger one.

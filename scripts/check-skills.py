@@ -65,7 +65,7 @@ def validate(package: Path) -> list[str]:
 
 
 def main() -> int:
-    root = Path(__file__).resolve().parents[1] / "skills"
+    root = Path(__file__).resolve().parents[1] / "plugin" / "skills"
     found = {path.name for path in root.iterdir() if path.is_dir()}
     failures: list[str] = []
     if found != EXPECTED:

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 — 2026-09-29
+
+- The plugin now lives in `plugin/`, apart from the repository tooling, and
+  carries the Ayda icon and a privacy statement for the Claude directory.
+- Install steps for the Claude apps.
+
 ## 1.1.0 — 2026-09-29
 
 - Eval suite: seven cases against a mocked Ayda server with the real tool
