@@ -3,9 +3,18 @@
   "displayName": "Ayda",
   "version": "1.0.0",
   "description": "Connect Claude to your company's own Ayda installation, and use its cited company knowledge well: daily briefs, open-loop triage, memories, decision traces, fact checks and onboarding briefs.",
-  "author": { "name": "Ubundi" },
+  "author": {
+    "name": "Ubundi"
+  },
   "homepage": "https://aydahq.com",
-  "keywords": ["knowledge", "company-memory", "mcp", "citations"],
+  "repository": "https://github.com/Ayda-Knowledge/ayda-plugin",
+  "license": "MIT",
+  "keywords": [
+    "knowledge",
+    "company-memory",
+    "mcp",
+    "citations"
+  ],
   "userConfig": {
     "installation_host": {
       "type": "string",

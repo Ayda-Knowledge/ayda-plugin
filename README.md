@@ -1,63 +1,109 @@
-# Ayda plugin
+![Ayda for Claude: your company's own knowledge, with a citation on every answer](assets/social-preview.png)
 
-Ayda is company memory that your company owns and runs. This plugin connects
-Claude to your company's own Ayda installation and adds skills that make an
-agent use it well: fewer calls, correct citations, and correct dates.
+# Ayda for Claude
 
-## What you need
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
+[![Plugin version](https://img.shields.io/badge/plugin-1.0.0-6A00E9)](CHANGELOG.md)
+[![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
-- A company Ayda installation with **Agent access** switched on by an admin.
-- The installation's host name, for example `ayda.example.com`. The plugin
-  asks for it when you install it.
+[Ayda](https://aydahq.com) is company memory that your company owns and runs.
+It reads the sources your company connects, such as Slack, Google Drive,
+Gmail and GitHub, and answers with a citation for each statement.
 
-When you first use the plugin, you sign in with your company account. Ayda
-answers as you: it shows only the records you have access to.
+This plugin connects Claude to your company's own Ayda installation. It also
+adds skills that make Claude use Ayda well: fewer calls, a citation on each
+statement, and the correct date for each fact.
 
 ## Skills
 
-| Skill | Use it to |
+**Every day**
+
+| Skill | What it does |
 | --- | --- |
-| `ayda-guide` | Combine Ayda's tools with few calls and read dates, conflicts and citations correctly. The other skills rely on it. |
-| `ayda-daily-brief` | Start the day: what changed, what you owe, what others owe you, and what looks done. |
-| `ayda-loop-sweep` | Go through your open loops and record your verdict on each. |
-| `ayda-remember` | Keep decisions and commitments from a conversation as your own Ayda memories. |
-| `ayda-decision-trace` | Show how and why a company decision was made, with citations. |
-| `ayda-fact-check` | Check a plan, document or change against recorded company facts. |
-| `ayda-onboarding` | Get a cited brief on a role, team or project. |
+| `ayda-daily-brief` | Starts your day: what changed, what you owe, what others owe you, and what looks done. |
+| `ayda-loop-sweep` | Goes through your open loops in small batches and records your verdict on each. |
+| `ayda-remember` | Keeps the decisions and commitments from a conversation as your own Ayda memories. |
 
-## What data the plugin sends
+**When you need an answer you can trust**
 
-The plugin sends your questions to your company's own Ayda installation, at
-the host you enter. It sends nothing to Ubundi. Ayda sends back records from
-your company's connected sources that you have access to.
+| Skill | What it does |
+| --- | --- |
+| `ayda-decision-trace` | Shows how and why a decision was made, and how it changed, with citations. |
+| `ayda-fact-check` | Checks a plan, document or change against recorded company facts. |
+| `ayda-onboarding` | Writes a cited brief on a role, team or project, with a reading list. |
+| `ayda-guide` | Holds the rules the other skills use: call cost, dates, conflicts between sources, and citations. |
 
-Two skills can write, and only after you say so:
+Claude selects a skill when your request fits it. In Claude Code you can also
+start one by name, for example `/ayda:ayda-daily-brief`.
 
-- `ayda-loop-sweep` records your verdict (open, done, dismissed) on one of
-  your own open loops.
-- `ayda-remember` stores a sentence you approve as your own memory record.
-  Ayda keeps the decisions it reads from that sentence pending until you
-  confirm them in Ayda.
+## Try it
 
-Neither skill writes to Slack, Google Drive, Gmail, GitHub or another source.
+- "Catch me up on what I missed yesterday."
+- "Which of my open loops look done? Let's clear them."
+- "Why did we change payment providers, and when did that happen?"
+- "Check this proposal against what we agreed with the client."
+- "Remember that we chose the Q4 pricing on the 12 October call."
+
+## How it works
+
+```mermaid
+flowchart LR
+  you([You]) --> claude[Claude + Ayda skills]
+  claude -->|MCP, signed in as you| ayda[Your Ayda installation]
+  ayda --> sources[(Slack, Drive, Gmail, GitHub and more)]
+```
+
+- Ayda runs in your company's own environment. The plugin connects to the
+  host you give it and to nothing else.
+- You sign in with your company account. Ayda answers as you and shows only
+  the records you have access to.
+- Each answer comes with its sources, so you can open the record behind each
+  statement.
 
 ## Install
 
-In Claude Code:
+You need a company Ayda installation with **Agent access** switched on by an
+admin, and its host name, for example `ayda.example.com`. If you do not know
+the host name, ask your Ayda admin.
+
+**Claude Code**
 
 ```text
 /plugin marketplace add Ayda-Knowledge/ayda-plugin
 /plugin install ayda@ayda
 ```
 
-Enter your installation's host name when the plugin asks for it, then sign
-in when Claude first calls Ayda.
+Enter your installation's host name when the plugin asks for it. Claude opens
+a sign-in page the first time it calls Ayda.
 
-The skills also work in other agents that read `SKILL.md` folders. Copy the
-folders under `skills/` and connect your Ayda MCP server in that agent.
+**Other agents**
 
-## Versions
+The skills are plain `SKILL.md` folders. Copy the folders under
+[`skills/`](skills/) to your agent's skills directory, then connect your Ayda
+MCP server in that agent. Ayda's **Connect Your Agent** page shows how for
+each agent.
 
-Each skill has its own `VERSION` file. The plugin version is in
-`.claude-plugin/plugin.json`. `python3 scripts/check-skills.py` audits every
-skill.
+## Data and privacy
+
+The plugin sends your questions to your company's own Ayda installation, at
+the host you enter. It sends nothing to Ubundi or to any other service.
+
+Ayda can change only two things, and only after you say so:
+
+- `ayda-loop-sweep` records your verdict (open, done or dismissed) on one of
+  your own open loops.
+- `ayda-remember` stores a sentence you approve as your own memory record.
+  Ayda keeps the decisions it reads from that sentence pending until you
+  confirm them in Ayda.
+
+No skill writes to Slack, Google Drive, Gmail, GitHub or another source.
+
+## Contributing
+
+Ideas for new skills and fixes are welcome. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) first. To report a security problem, read
+[SECURITY.md](SECURITY.md).
+
+## Licence
+
+[MIT](LICENSE) © 2026 Ubundi

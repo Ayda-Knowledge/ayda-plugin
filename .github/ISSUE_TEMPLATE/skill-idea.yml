@@ -1,0 +1,18 @@
+name: Skill idea
+description: Propose a new skill.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: ask
+    attributes:
+      label: What the member asks for
+      placeholder: "Prepare me for my 2pm meeting with the client."
+    validations:
+      required: true
+  - type: textarea
+    id: tools
+    attributes:
+      label: Ayda tools it combines
+      description: For example find_person, timeline and open_loops. Say why one call is not enough.
+    validations:
+      required: true

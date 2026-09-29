@@ -1,0 +1,25 @@
+name: Skill problem
+description: A skill did the wrong thing, or Claude did not use it.
+labels: [bug]
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill
+      placeholder: ayda-daily-brief
+    validations:
+      required: true
+  - type: input
+    id: host
+    attributes:
+      label: Agent and version
+      placeholder: Claude Code 2.1.284
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you asked, what the agent did, and what you expected. Remove company data before you paste a transcript.
+    validations:
+      required: true

@@ -30,5 +30,5 @@ added to `EXPECTED` in `scripts/check-skills.py`.
 
 ```bash
 python3 scripts/check-skills.py
-claude plugin validate .
+claude plugin validate . --strict
 ```
