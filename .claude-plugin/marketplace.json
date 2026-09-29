@@ -1,0 +1,14 @@
+{
+  "name": "ayda",
+  "description": "The Ayda plugin for Claude: skills and the MCP connection for your company's own Ayda.",
+  "owner": {
+    "name": "Ubundi"
+  },
+  "plugins": [
+    {
+      "name": "ayda",
+      "source": "./",
+      "description": "Connect Claude to your company's own Ayda installation, and use its cited company knowledge well."
+    }
+  ]
+}
