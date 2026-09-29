@@ -114,18 +114,18 @@ No skill writes to Slack, Google Drive, Gmail, GitHub or another source.
 
 ## Evals
 
-The [`plugin/evals/`](plugin/evals/) suite checks the behaviour that matters: that the daily
+The [`evals/`](evals/) suite checks the behaviour that matters: that the daily
 brief reads your day in your own time zone, that a sweep writes nothing
 before you decide, that instructions hidden in a record never cause a write,
 and that two sources that disagree are both shown.
 
 `scripts/eval-compare.sh` runs each case against a mocked Ayda, once with the
 skills and once with the Ayda connection alone, so the difference is what the
-skills add. The latest scores are in [plugin/evals/RESULTS.md](plugin/evals/RESULTS.md).
+skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
 
 ## Repository layout
 
-- [`plugin/`](plugin/) is the plugin itself: the manifest, icon, skills and evals.
+- [`plugin/`](plugin/) is the plugin itself: the manifest, icon and skills.
   It is what Claude installs and what the Claude directory reads.
 - Everything else, such as `scripts/`, CI and this README, supports its
   development and is not installed.

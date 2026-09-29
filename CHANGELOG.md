@@ -2,7 +2,8 @@
 
 ## 1.1.1 — 2026-09-29
 
-- The plugin now lives in `plugin/`, apart from the repository tooling, and
+- The plugin now lives in `plugin/`, apart from the repository tooling and
+  the eval suite, and
   carries the Ayda icon and a privacy statement for the Claude directory.
 - Install steps for the Claude apps.
 

@@ -34,14 +34,14 @@ claude plugin validate . --strict
 CI runs the same two checks on every pull request.
 
 A change to a skill's behaviour also needs its eval. Add or update a case
-under `plugin/evals/` (a `prompt.md` and its `graders/`), then run the comparison.
+under `evals/` (a `prompt.md` and its `graders/`), then run the comparison.
 It calls the model with your own Claude credentials:
 
 ```bash
 scripts/eval-compare.sh            # RUNS=3 and MODEL=claude-sonnet-5-5 by default
 ```
 
-Commit the updated `plugin/evals/RESULTS.md` with the change.
+Commit the updated `evals/RESULTS.md` with the change.
 
 ## Release
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Score the eval suite twice against the same mocked Ayda server: once with the
 # plugin's skills, once with only its MCP connection. The difference is what
-# the skills add. Writes plugin/evals/RESULTS.md.
+# the skills add. Writes evals/RESULTS.md.
 #
 # The built-in no-plugin baseline cannot measure this: without the plugin there
 # is no Ayda server at all, so every case fails for a reason the skills do not
 # cause.
 set -euo pipefail
 
-root=$(cd "$(dirname "$0")/../plugin" && pwd)
+repo=$(cd "$(dirname "$0")/.." && pwd)
 runs=${RUNS:-3}
 model=${MODEL:-claude-sonnet-5-5}
 # The default small judge misreads long, nuanced replies; the docs advise a stronger one.
@@ -16,9 +16,15 @@ judge=${JUDGE:-sonnet}
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
-mkdir -p "$work/ayda"
-cp -R "$root/.claude-plugin" "$root/evals" "$work/ayda/"
-rm -rf "$work/ayda/evals/results"
+# The suite lives outside plugin/ so the Claude directory never scans its
+# fixtures; each arm gets its own plugin copy with the suite inside.
+for arm in with without; do
+  mkdir -p "$work/$arm"
+  cp -R "$repo/plugin/." "$work/$arm/"
+  cp -R "$repo/evals" "$work/$arm/evals"
+  rm -rf "$work/$arm/evals/results"
+done
+rm -rf "$work/without/skills"
 
 score() {
   # A case below threshold exits 1; the scores are the point, so carry on.
@@ -26,10 +32,12 @@ score() {
     -j 4 --trust-plugin --no-publish --json "$2" || true
 }
 
-score "$root" "$work/with.json"
-score "$work/ayda" "$work/without.json"
+score "$work/with" "$work/with.json"
+score "$work/without" "$work/without.json"
+mkdir -p "$repo/evals/results"
+cp -R "$work/with/evals/results/." "$repo/evals/results/" 2>/dev/null || true
 
-python3 - "$work/with.json" "$work/without.json" "$root/evals/RESULTS.md" "$model" "$runs" "$judge" <<'PY'
+python3 - "$work/with.json" "$work/without.json" "$repo/evals/RESULTS.md" "$model" "$runs" "$judge" <<'PY'
 import json, sys
 from datetime import date
 
