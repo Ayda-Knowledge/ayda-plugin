@@ -80,14 +80,15 @@ a sign-in page the first time it calls Ayda.
 
 **Claude apps (claude.ai, desktop and Cowork)**
 
-The Claude apps load the plugin's skills but do not ask for a host name, so
-connect your installation yourself:
-
 1. In **Customize > Plugins**, select **Add > Add marketplace**, enter
    `Ayda-Knowledge/ayda-plugin`, and install **Ayda**.
-2. In **Customize > Connectors**, add a custom connector named `Ayda` with the
-   URL `https://<your Ayda host>/mcp`, and sign in. On a Team or Enterprise
-   plan, an Owner may add it for the organisation first.
+2. Connect your installation:
+   - If your organisation already has an Ayda connector, you are done. The
+     skills use it, and the plugin's **Connectors** tab can still show
+     **Not added**.
+   - Otherwise, open the plugin's **Connectors** tab and select **Connect**.
+     Replace the part in braces with your Ayda host, so the URL reads
+     `https://<your Ayda host>/mcp`, then sign in.
 
 **Other agents**
 
