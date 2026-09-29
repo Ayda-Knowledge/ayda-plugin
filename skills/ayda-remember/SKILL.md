@@ -24,8 +24,10 @@ member confirms them in Ayda.
 
    Example: "On 2026-09-29 Thandi agreed to send the revised venue quote to
    Bob by 2026-10-03 for the October offsite."
-3. **Get the member's approval.** Show the drafted sentences and let the
-   member pick, edit or drop each one.
+3. **Get the member's approval** for candidates you drew from the
+   conversation: show the drafted sentences and let the member pick, edit or
+   drop each one. A single thing the member named themselves is already
+   approved; store your standalone version of it.
 4. **Store each approved sentence** with one `remember` call. Every call
    stores a new record, so call once per sentence and retry only a call that
    failed.

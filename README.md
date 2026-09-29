@@ -3,7 +3,7 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.0.0-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.1.0-6A00E9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.
@@ -34,7 +34,9 @@ statement, and the correct date for each fact.
 | `ayda-guide` | Holds the rules the other skills use: call cost, dates, conflicts between sources, and citations. |
 
 Claude selects a skill when your request fits it. In Claude Code you can also
-start one by name, for example `/ayda:ayda-daily-brief`.
+start one by name, for example `/ayda:ayda-daily-brief`. Name Ayda when you
+want something kept there ("save this to Ayda"): in Claude Code a plain
+"remember this" goes to Claude's own memory.
 
 ## Try it
 
@@ -42,7 +44,7 @@ start one by name, for example `/ayda:ayda-daily-brief`.
 - "Which of my open loops look done? Let's clear them."
 - "Why did we change payment providers, and when did that happen?"
 - "Check this proposal against what we agreed with the client."
-- "Remember that we chose the Q4 pricing on the 12 October call."
+- "Save to Ayda that we chose the Q4 pricing on the 12 October call."
 
 ## How it works
 
@@ -97,6 +99,17 @@ Ayda can change only two things, and only after you say so:
   confirm them in Ayda.
 
 No skill writes to Slack, Google Drive, Gmail, GitHub or another source.
+
+## Evals
+
+The [`evals/`](evals/) suite checks the behaviour that matters: that the daily
+brief reads your day in your own time zone, that a sweep writes nothing
+before you decide, that instructions hidden in a record never cause a write,
+and that two sources that disagree are both shown.
+
+`scripts/eval-compare.sh` runs each case against a mocked Ayda, once with the
+skills and once with the Ayda connection alone, so the difference is what the
+skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
 
 ## Contributing
 

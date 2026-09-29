@@ -1,0 +1,455 @@
+{
+  "tools": [
+    {
+      "name": "ask",
+      "description": "Answer a question from company knowledge visible to the signed-in member, with citations. Optional effective_at (ISO 8601) evaluates the state at that world-time instant; omitted means now. Optional known_at (ISO 8601) replays what Ayda knew by then; rejected when record-time reads are off. Use for internal meeting outcomes, decisions, project history, responsibilities, and company documents when the conversation concerns this company, even if the user omits its name or Ayda. If the company or referenced meeting or project is unclear, ask one short clarifying question. Use other sources for general knowledge or another company's internal knowledge. Use Ayda for this company's records about customers or partners, and for coding tasks that need internal evidence. Include the meeting, project, and date context already supplied in the conversation in the question. Pass folder_contains to keep the evidence inside one matter or client folder. Use search instead when you need source evidence without an Ayda answer.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "effective_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional world-time instant (ISO 8601) at which to evaluate state. Omitted means now."
+          },
+          "known_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional record-time replay instant (ISO 8601): answer with what Ayda knew by then. Rejected when record-time reads are disabled or the value is in the future."
+          },
+          "folder_contains": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional folder-path substring that scopes the evidence to one matter, client, or project folder. Omitted means every visible record."
+          }
+        },
+        "required": [
+          "question"
+        ]
+      }
+    },
+    {
+      "name": "search",
+      "description": "Retrieve company evidence without generating an Ayda answer. Returns at most limit results, ranked by relevance and not exhaustive. Use for internal meeting outcomes, decisions, project history, responsibilities, and company documents when the conversation concerns this company, even if the user omits its name or Ayda. If the company or referenced meeting or project is unclear, ask one short clarifying question. Use other sources for general knowledge or another company's internal knowledge. Use Ayda for this company's records about customers or partners, and for coding tasks that need internal evidence. Include the known meeting, project, and date context in the query. Pass folder_contains to keep the evidence inside one matter or client folder. Use ask when a single cited answer is sufficient. Results are ranked by relevance and are not exhaustive: search finds what the query asks about, so treat the result count as a floor, never as a total \u2014 use list_records when the list itself must be complete.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 10
+          },
+          "folder_contains": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional folder-path substring that scopes the evidence to one matter, client, or project folder. Omitted means every visible record."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_record",
+      "description": "Read a bounded cited record visible to the signed-in member. Use a canonical ID returned by Ayda to inspect its evidence or read a citation whose URL the client cannot open. Use ask or search to locate an unknown record.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "canonical_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "canonical_id"
+        ]
+      }
+    },
+    {
+      "name": "list_sources",
+      "description": "Check source coverage visible to the signed-in member. Use when asked which sources Ayda can search; it is not a prerequisite for every question.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_records",
+      "description": "Enumerate the records visible to the signed-in member deterministically, newest first, with optional source, title-substring, folder-substring, and date filters. THE folder-listing and directory call: use it whenever a complete list matters \u2014 a folder's contents, an inventory, a schedule, a 'list all' task \u2014 where search's ranked results would be a floor, not a total. Page with the returned cursor until truncated is false: an empty page that still carries next_cursor means keep paging, not that nothing is left.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "title_contains": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "folder_contains": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "created_after": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "created_before": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        }
+      }
+    },
+    {
+      "name": "find_person",
+      "description": "Find a curated person and their visible supporting records by name. Records this person wrote rank first and score highest; a lower score means they were only present, which in a shared channel is most people. Use ask or search for evidence about responsibilities; this bounded profile is not an inferred expertise or ownership directory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5,
+            "description": "How many PEOPLE to return. Each person carries at most 10 supporting records regardless of this value."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "timeline",
+      "description": "List visible records in date order for a time range of at most 31 days. Use when the member asks what happened when, in what order, or what is coming up; use ask or search to explain what happened in a meeting or project. Hosts that support MCP Apps display the result as a timeline panel: summarise it, do not redraw it. One page at a time: truncated means the range holds more, and next_cursor pages through it. A high approximate_dates count means most timestamps in this range are when Ayda first saw the records, not when the events happened \u2014 report that limit instead of presenting them as a chronology.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ]
+      }
+    },
+    {
+      "name": "explore_graph",
+      "description": "Follow bounded graph connections from any canonical ID returned by Ayda, including a concept or decision ID from a record's backlinks (decision:, action:, project:, topic:, org:, entity:, person:, event:). Records come back in records; concepts, decisions and action items come back in concepts because they have no record of their own to read; every hop is in references. Use to inspect related evidence; use get_record to read a record and search or ask to find one.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "canonical_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "hops": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2,
+            "default": 1
+          },
+          "degree": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30,
+            "default": 20
+          }
+        },
+        "required": [
+          "canonical_id"
+        ]
+      }
+    },
+    {
+      "name": "research_brief",
+      "description": "Build one cited brief on a topic that needs several connected sources. Prefer ask or search when one question or evidence lookup is sufficient. A client that supports MCP Tasks receives a task handle and polls tasks/get; any other client receives a shorter brief directly.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "topic"
+        ]
+      }
+    },
+    {
+      "name": "open_loops",
+      "description": "List the signed-in member's open loops: the asks, promises and follow-ups they owe someone (your move) or await from someone (waiting), plus what they closed (done). Each carries the record that raised it, an evidence quote, the counterpart, any due date and the member's own status and note. Use when the member asks what they owe, what is waiting on others, what needs closing, or for a to-do list. Present the three groups and offer to close, dismiss, reopen or note any loop by its id with decide_open_loop. Not a search: use ask or search for company evidence.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "enum": [
+              "your_move",
+              "waiting",
+              "done",
+              "all"
+            ],
+            "default": "all"
+          },
+          "since": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20
+          }
+        }
+      }
+    },
+    {
+      "name": "decide_open_loop",
+      "description": "Record the signed-in member's verdict on one of their own open loops: done, dismissed or open (reopen, or reject Ayda's looks-done claim), with an optional note and an optional rationale of up to 500 characters each. One of two writes on this server. It changes only the member's own status row for an item open_loops returned; it never edits a source system, a record or the graph. Use only after the member said which loop and which verdict.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "done",
+              "dismissed"
+            ]
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "What told the member so, in their own words. Optional; quoted back as a precedent when the same loop comes up again."
+          }
+        },
+        "required": [
+          "item_id",
+          "status"
+        ]
+      }
+    },
+    {
+      "name": "remember",
+      "description": "Tell Ayda one sentence the signed-in member wants kept, such as a decision made in a call Ayda did not see (up to 2000 characters). The second write on this server, and a proposal, not an assertion: the sentence is stored as the member's own memory record, readable by nobody else, and the decisions and open loops Ayda reads out of it wait as pending until the member confirms them in Ayda's own interface. Nothing an agent says here changes what Ayda believes. Use only for a sentence the member explicitly asked to be remembered, and say in reply that it is saved and waits for their confirmation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "today",
+      "description": "The rundown of one day: every record visible to the signed-in member that happened that day, grouped by who wrote it, with source counts and the member's own open loops raised or closed that day. Defaults to today in UTC; pass date (YYYY-MM-DD) and an IANA timezone for another day or zone. Use for 'what happened today', a daily digest, a stand-up, or an end-of-day check before acting on Ayda alone. It lists and groups; it does not summarise. Use ask to explain a record it names, and open_loops to act on a loop.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "default": "UTC"
+          }
+        }
+      }
+    }
+  ]
+}

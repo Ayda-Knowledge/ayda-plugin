@@ -18,7 +18,11 @@ live in the Ayda product repository; this repository only instructs agents.
 - Every step ends on a completion criterion. The two writes,
   `decide_open_loop` and `remember`, run only on the member's own words.
 - Prove a new step against a live Ayda before shipping it: the tool's real
-  result shape beats its documentation.
+  result shape beats its documentation. Then give it an eval case under
+  `evals/`, with fixtures from a fictional company: this repository is
+  public, so no real record goes into a mock.
+- Grade behaviour, not skill invocation: `scripts/eval-compare.sh` scores the
+  same cases without the skills, and only behaviour graders compare fairly.
 
 ## Versions
 
