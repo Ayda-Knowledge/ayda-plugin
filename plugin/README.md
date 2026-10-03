@@ -22,6 +22,12 @@ fact.
 - `ayda-guide`: the rules the other skills use for cost, dates, conflicts
   between sources, and citations.
 
+## In Claude Code
+
+A row above the prompt shows your open loop counts, and `/ayda-loops` opens
+the list with a button for each verdict. Each Ayda answer shows its sources,
+its temporal status, and a warning when sources disagree.
+
 ## Use it
 
 Your company needs an Ayda installation with **Agent access** switched on.
