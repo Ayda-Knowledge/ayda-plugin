@@ -26,6 +26,20 @@ live in the Ayda product repository; this repository only instructs agents.
 - Grade behaviour, not skill invocation: `scripts/eval-compare.sh` scores the
   same cases without the skills, and only behaviour graders compare fairly.
 
+## The Claude Code mod
+
+`plugin/hooks/register.tsx` is a Claude Code mod: it draws Ayda results that
+Claude Code would show as plain text, and calls Ayda directly for the open
+loops list. It is for Claude Code only; the skills must work without it.
+
+- It calls only the member's own Ayda server, and writes only
+  `decide_open_loop`, only from a button the member pressed.
+- Ayda's result shapes live in the product repository. `plugin/types/`
+  holds only the fields the mod draws.
+- Load it from disk with `claude --plugin-dir plugin`. That session reads
+  the host from `pluginConfigs.ayda.options.installation_host` in the
+  user settings.
+
 ## Versions
 
 Bump a skill's `VERSION` when its behaviour changes, and the plugin

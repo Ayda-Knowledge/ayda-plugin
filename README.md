@@ -38,6 +38,21 @@ start one by name, for example `/ayda:ayda-daily-brief`. Name Ayda when you
 want something kept there ("save this to Ayda"): in Claude Code a plain
 "remember this" goes to Claude's own memory.
 
+## In Claude Code
+
+Claude Code does not show Ayda's panels, so the plugin draws its own there:
+
+- **Open loops.** A row above the prompt shows how many loops are your move
+  and how many wait on others. `/ayda-loops` opens the list with its
+  evidence and a button for each verdict. A button press goes directly to
+  Ayda: no model reads or writes on the way.
+- **Sources.** Each Ayda answer shows its sources as links, its temporal
+  status, and a warning when two sources disagree or a quoted source changed.
+- **Your day.** `today` uses your own time zone.
+
+The plugin reads your open loops when a session starts and each 15 minutes
+after that.
+
 ## Try it
 
 - "Catch me up on what I missed yesterday."
@@ -104,8 +119,8 @@ the host you enter. It sends nothing to Ubundi or to any other service.
 
 Ayda can change only two things, and only after you say so:
 
-- `ayda-loop-sweep` records your verdict (open, done or dismissed) on one of
-  your own open loops.
+- `ayda-loop-sweep`, or a verdict button in the open loops pane, records
+  your verdict (open, done or dismissed) on one of your own open loops.
 - `ayda-remember` stores a sentence you approve as your own memory record.
   Ayda keeps the decisions it reads from that sentence pending until you
   confirm them in Ayda.
