@@ -103,13 +103,14 @@ type RawLoop = {
   raised?: { title: string; source: string; channel?: string | null }
   evidence?: string | null
   ayda_confident?: { summary?: string } | null
+  resolution?: { summary?: string | null } | null
 }
 
 function toLoop(raw: RawLoop): Loop {
-  const who = raw.counterpart_name ?? 'someone'
+  const who = raw.counterpart_name
   const parts = [
     raw.summary,
-    raw.direction === 'await' ? `waiting on ${who}` : `for ${who}`,
+    who ? (raw.direction === 'await' ? `waiting on ${who}` : `for ${who}`) : '',
     raw.due_at ? `due ${day(raw.due_at)}` : '',
     raw.raised ? `raised in ${raw.raised.title} (${raw.raised.channel ?? raw.raised.source}, ${day(raw.raised_at) || 'date unknown'})` : '',
   ]
@@ -119,7 +120,7 @@ function toLoop(raw: RawLoop): Loop {
     text: parts.filter(Boolean).join(' · '),
     looksDone: raw.status === 'looks_done',
     evidence: raw.evidence ?? undefined,
-    reason: raw.ayda_confident?.summary,
+    reason: raw.ayda_confident?.summary ?? raw.resolution?.summary ?? undefined,
   }
 }
 
@@ -239,13 +240,16 @@ export const register: Register = on => {
     if (e.props.hasSurvey || loops === null || loops.counts.open === 0) return next(e)
 
     const { Box, Button, Text } = $.ui.resolve(e)
-    const looksDone = [...loops.your_move, ...loops.waiting].filter(loop => loop.looksDone).length
+    const shown = [...loops.your_move, ...loops.waiting]
+    const looksDone = shown.filter(loop => loop.looksDone).length
+    // The mod holds only the first loops of each group, so this count is a floor.
+    const atLeast = shown.length < loops.counts.open ? '+' : ''
 
     return (
       <Box>
         <Text dimColor>
           Ayda · {loops.counts.your_move} your move · {loops.counts.waiting} waiting
-          {looksDone > 0 ? ` · ${looksDone} look done` : ''}{' '}
+          {looksDone > 0 ? ` · ${looksDone}${atLeast} look done` : ''}{' '}
         </Text>
         <Button key="open" label="Loops" onPress={() => void openPane($)} />
       </Box>
