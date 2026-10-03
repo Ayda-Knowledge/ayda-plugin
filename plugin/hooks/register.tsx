@@ -78,14 +78,24 @@ async function callAyda($: EngineInterface, tool: string, args: Record<string, u
   return result.structuredContent
 }
 
+// Auto mode has a verdict only for an action the model asked for. The mod's
+// own call has no model request behind it, so auto mode refuses it until a
+// permission rule allows the tool.
+function explain(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error)
+
+  return /auto mode classifier/i.test(message)
+    ? 'Auto mode cannot approve a call that the Ayda mod makes itself. Allow the Ayda tools open_loops and decide_open_loop in /permissions, then press Refresh.'
+    : message
+}
+
 async function refresh($: EngineInterface) {
   try {
     const loops = await callAyda($, 'open_loops', { filter: 'all', limit: 20 })
     if (!isObject(loops) || !isObject(loops.counts)) throw new Error('Ayda returned no open loops list.')
     await update($, loopsState, () => ({ loops: loops as Loops, error: null }))
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    await update($, loopsState, held => ({ ...held, error: message }))
+    await update($, loopsState, held => ({ ...held, error: explain(error) }))
   }
 }
 
@@ -94,7 +104,7 @@ async function decide($: EngineInterface, loop: Loop, status: 'open' | 'done' | 
     await callAyda($, 'decide_open_loop', { item_id: loop.id, status })
     $.ui.toast(`Ayda: marked ${status}: ${loop.summary}`)
   } catch (error) {
-    $.ui.toast(error instanceof Error ? error.message : String(error))
+    $.ui.toast(explain(error))
   }
   await refresh($)
 }
