@@ -1,21 +1,14 @@
-// The fields of Ayda's `open_loops` result that the mod draws. The server
-// owns the full shape (`OpenLoopsResult` in the Ayda product repository).
-
-export type LoopRecord = {
-  title: string
-  source: string
-  created_at?: string | null
-}
+// The open loops list as the mod holds it, read from the text form of Ayda's
+// `open_loops` result. The server owns the full shape (`OpenLoopsResult` and
+// `open_loops_text` in the Ayda product repository).
 
 export type Loop = {
   id: string
-  summary: string
-  status: 'open' | 'looks_done' | 'done' | 'dismissed'
-  counterpart_name?: string | null
-  due_at?: string | null
-  raised: LoopRecord
-  evidence?: string | null
-  ayda_confident?: { summary: string } | null
+  // The loop as the server wrote it for a person: the ask, who it is with,
+  // a due date, and the record that raised it.
+  text: string
+  // Ayda proposes that the loop is done and waits for the member's verdict.
+  looksDone: boolean
 }
 
 export type Loops = {

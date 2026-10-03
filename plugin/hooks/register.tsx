@@ -56,6 +56,37 @@ function readAnswer(output: unknown): Answer | null {
   return isObject(value) && Array.isArray(value.citations) ? (value as Answer) : null
 }
 
+// Claude Code hands a mod only the text form of an MCP result, not the
+// structured one, so the list is read from the text the server writes for a
+// person: a counts line, three headings, and per loop one line and its id.
+// ponytail: read `structuredContent` once `$.mcp.call` passes it on; that
+// also brings back the evidence quote and Ayda's reason for a done proposal.
+const GROUPS = { 'Your move': 'your_move', 'Awaiting others': 'waiting', Done: 'done' } as const
+
+function parseLoops(text: string): Loops | null {
+  const counts = /^(\d+) open · (\d+) your move · (\d+) awaiting others · (\d+) done/.exec(text)
+  if (counts === null) return null
+
+  const [open, yourMove, waiting, done] = counts.slice(1).map(Number) as [number, number, number, number]
+  const loops: Loops = { your_move: [], waiting: [], done: [], counts: { open, your_move: yourMove, waiting, done } }
+  let group: Loop[] | null = null
+  let held: string | null = null
+
+  for (const line of text.split('\n')) {
+    const heading = /^(Your move|Awaiting others|Done) \(\d+\)$/.exec(line)?.[1] as keyof typeof GROUPS | undefined
+    if (heading) {
+      group = loops[GROUPS[heading]]
+    } else if (line.startsWith('- ')) {
+      held = line.slice(2)
+    } else if (line.startsWith('  id: ') && group !== null && held !== null) {
+      group.push({ id: line.slice(6), text: held, looksDone: held.includes(' · looks done, confirm?') })
+      held = null
+    }
+  }
+
+  return loops
+}
+
 const day = (iso?: string | null) => (iso ? iso.slice(0, 10) : '')
 
 async function findServer($: EngineInterface): Promise<string> {
@@ -71,11 +102,10 @@ async function findServer($: EngineInterface): Promise<string> {
 
 async function callAyda($: EngineInterface, tool: string, args: Record<string, unknown>) {
   const result = await $.mcp.call(await findServer($), tool, args)
-  if (result.isError) {
-    throw new Error(result.content.find(block => block.type === 'text')?.text ?? `Ayda could not complete ${tool}.`)
-  }
+  const text = result.content.find(block => block.type === 'text')?.text
+  if (result.isError || text === undefined) throw new Error(text ?? `Ayda could not complete ${tool}.`)
 
-  return result.structuredContent
+  return text
 }
 
 // Auto mode has a verdict only for an action the model asked for. The mod's
@@ -91,9 +121,9 @@ function explain(error: unknown): string {
 
 async function refresh($: EngineInterface) {
   try {
-    const loops = await callAyda($, 'open_loops', { filter: 'all', limit: 20 })
-    if (!isObject(loops) || !isObject(loops.counts)) throw new Error('Ayda returned no open loops list.')
-    await update($, loopsState, () => ({ loops: loops as Loops, error: null }))
+    const loops = parseLoops(await callAyda($, 'open_loops', { filter: 'all', limit: 20 }))
+    if (loops === null) throw new Error('Ayda returned no open loops list.')
+    await update($, loopsState, () => ({ loops, error: null }))
   } catch (error) {
     await update($, loopsState, held => ({ ...held, error: explain(error) }))
   }
@@ -102,7 +132,7 @@ async function refresh($: EngineInterface) {
 async function decide($: EngineInterface, loop: Loop, status: 'open' | 'done' | 'dismissed') {
   try {
     await callAyda($, 'decide_open_loop', { item_id: loop.id, status })
-    $.ui.toast(`Ayda: marked ${status}: ${loop.summary}`)
+    $.ui.toast(`Ayda: marked ${status}: ${loop.text.split(' · ')[0]}`)
   } catch (error) {
     $.ui.toast(explain(error))
   }
@@ -150,7 +180,7 @@ export const register: Register = on => {
     if (e.props.hasSurvey || loops === null || loops.counts.open === 0) return next(e)
 
     const { Box, Button, Text } = $.ui.resolve(e)
-    const looksDone = [...loops.your_move, ...loops.waiting].filter(loop => loop.status === 'looks_done').length
+    const looksDone = [...loops.your_move, ...loops.waiting].filter(loop => loop.looksDone).length
 
     return (
       <Box>
@@ -177,19 +207,8 @@ export const register: Register = on => {
         {list.length === 0 && <Text dimColor>Nothing here.</Text>}
         {list.map((loop, index) => (
           <Box flexDirection="column" marginTop={1}>
-            <Text>
-              {loop.summary}
-              {loop.counterpart_name ? ` · ${loop.counterpart_name}` : ''}
-              {loop.due_at ? ` · due ${day(loop.due_at)}` : ''}
-            </Text>
-            <Text dimColor>
-              Raised in {loop.raised.title} ({loop.raised.source}
-              {loop.raised.created_at ? `, ${day(loop.raised.created_at)}` : ''})
-            </Text>
-            {loop.evidence && <Text dimColor>“{loop.evidence}”</Text>}
-            {loop.status === 'looks_done' && (
-              <Text color={WARNING}>Ayda thinks this is done. {loop.ayda_confident?.summary ?? ''}</Text>
-            )}
+            <Text>{loop.text}</Text>
+            {loop.looksDone && <Text color={WARNING}>Ayda thinks this is done. Confirm it, or press Not done.</Text>}
             {name === 'done' ? (
               <Box>
                 <Button key={`${name}-${index}-open`} label="Reopen" onPress={() => void decide($, loop, 'open')} />
@@ -202,7 +221,7 @@ export const register: Register = on => {
                   label="Dismiss"
                   onPress={() => void decide($, loop, 'dismissed')}
                 />
-                {loop.status === 'looks_done' && (
+                {loop.looksDone && (
                   <Button key={`${name}-${index}-open`} label="Not done" onPress={() => void decide($, loop, 'open')} />
                 )}
               </Box>

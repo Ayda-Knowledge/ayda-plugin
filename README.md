@@ -43,8 +43,8 @@ want something kept there ("save this to Ayda"): in Claude Code a plain
 Claude Code does not show Ayda's panels, so the plugin draws its own there:
 
 - **Open loops.** A row above the prompt shows how many loops are your move
-  and how many wait on others. `/ayda-loops` opens the list with its
-  evidence and a button for each verdict. A button press goes directly to
+  and how many wait on others. `/ayda-loops` opens the list with the
+  record that raised each loop and a button for each verdict. A press goes directly to
   Ayda: no model reads or writes on the way.
 - **Sources.** Each Ayda answer shows its sources as links, its temporal
   status, and a warning when two sources disagree or a quoted source changed.
