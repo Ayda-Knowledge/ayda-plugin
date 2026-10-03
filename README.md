@@ -51,7 +51,10 @@ Claude Code does not show Ayda's panels, so the plugin draws its own there:
 - **Your day.** `today` uses your own time zone.
 
 The plugin reads your open loops when a session starts and each 15 minutes
-after that.
+after that. The pane shows the first five loops of each group; the counts
+are for your whole list. In auto mode, Claude Code refuses a call that the
+plugin makes itself: allow the Ayda tools `open_loops` and
+`decide_open_loop` in `/permissions` to use the row and the pane there.
 
 ## Try it
 

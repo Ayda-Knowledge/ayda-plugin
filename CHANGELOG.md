@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 — unreleased
+## 1.2.0 — 2026-10-03
 
 - A Claude Code mod (`plugin/hooks/`). Claude Code does not show Ayda's MCP
   Apps, so the mod draws two of them from the same tool results:
@@ -9,6 +9,9 @@
   - a source card under each `ask` and `research_brief` result, with the
     temporal status and a warning when sources disagree or a quote is stale.
 - The mod adds your own time zone to a `today` call that has none.
+- Limits: the pane shows the first five loops of each group, and a session
+  in auto mode must allow the `open_loops` and `decide_open_loop` tools
+  before the mod can call them.
 
 ## 1.1.1 — 2026-09-29
 
