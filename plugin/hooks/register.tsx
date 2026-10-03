@@ -26,7 +26,7 @@ const TODAY = /^mcp__.*ayda.*__today$/i
 const DECIDE = /^mcp__.*ayda.*__decide_open_loop$/i
 const ANSWERS = /^mcp__.*ayda.*__(ask|research_brief)$/i
 
-const initial: LoopsState = { loops: null, error: null }
+const initial: LoopsState = { loops: null, error: null, busy: false }
 const loopsState = atom({ plugin: 'ayda', key: 'loops' } as const, initial)
 
 type Citation = {
@@ -80,7 +80,8 @@ function parseLoops(text: string): Loops | null {
     } else if (line.startsWith('- ')) {
       held = line.slice(2)
     } else if (line.startsWith('  id: ') && group !== null && held !== null) {
-      group.push({ id: line.slice(6), text: held, looksDone: held.includes(' · looks done, confirm?') })
+      const [title = '', ...rest] = held.split(' · ')
+      group.push({ id: line.slice(6), title, meta: rest.join(' · '), looksDone: held.includes(' · looks done, confirm?') })
       held = null
     }
   }
@@ -89,6 +90,32 @@ function parseLoops(text: string): Loops | null {
 }
 
 const day = (iso?: string | null) => (iso ? iso.slice(0, 10) : '')
+
+function age(iso?: string | null): string {
+  if (!iso) return ''
+  const days = Math.floor((Date.now() - Date.parse(iso)) / 86_400_000)
+
+  return days <= 0 ? 'today' : `${days}d ago`
+}
+
+// A `Link` with an `href` outside these bounds refuses the whole tree it is
+// in, so a URL that does not fit is drawn as text.
+function linkable(url?: string | null): string | undefined {
+  try {
+    const { href, protocol } = new URL(url ?? '')
+
+    return protocol === 'https:' && href.length <= 2048 && /^[\x21-\x3f\x41-\x7e]+$/.test(href) ? href : undefined
+  } catch {
+    return undefined
+  }
+}
+
+// A Slack record has its message as its title, with a URL in it.
+function short(title: string): string {
+  const cut = title.split(/\s*https?:\/\//)[0] ?? title
+
+  return cut.length > 60 ? `${cut.slice(0, 59)}…` : cut
+}
 
 // One loop of the structured result: the fields of the server's `TodoItem`
 // that the pane shows.
@@ -100,7 +127,7 @@ type RawLoop = {
   counterpart_name?: string | null
   due_at?: string | null
   raised_at?: string | null
-  raised?: { title: string; source: string; channel?: string | null }
+  raised?: { title: string; source: string; channel?: string | null; url?: string | null }
   evidence?: string | null
   ayda_confident?: { summary?: string } | null
   resolution?: { summary?: string | null } | null
@@ -109,15 +136,17 @@ type RawLoop = {
 function toLoop(raw: RawLoop): Loop {
   const who = raw.counterpart_name
   const parts = [
-    raw.summary,
     who ? (raw.direction === 'await' ? `waiting on ${who}` : `for ${who}`) : '',
-    raw.due_at ? `due ${day(raw.due_at)}` : '',
-    raw.raised ? `raised in ${raw.raised.title} (${raw.raised.channel ?? raw.raised.source}, ${day(raw.raised_at) || 'date unknown'})` : '',
+    raw.raised ? (raw.raised.channel ?? raw.raised.source) : '',
+    age(raw.raised_at),
   ]
 
   return {
     id: raw.id,
-    text: parts.filter(Boolean).join(' · '),
+    title: raw.summary,
+    meta: parts.filter(Boolean).join(' · '),
+    due: day(raw.due_at) || undefined,
+    raised: raw.raised ? { title: short(raw.raised.title), url: linkable(raw.raised.url) } : undefined,
     looksDone: raw.status === 'looks_done',
     evidence: raw.evidence ?? undefined,
     reason: raw.ayda_confident?.summary ?? raw.resolution?.summary ?? undefined,
@@ -174,6 +203,7 @@ function explain(error: unknown): string {
 }
 
 async function refresh($: EngineInterface) {
+  await update($, loopsState, held => ({ ...held, busy: true }))
   try {
     let text = ''
     let loops: Loops | null = null
@@ -183,16 +213,32 @@ async function refresh($: EngineInterface) {
       if (loops !== null) break
     }
     if (loops === null) throw new Error(`Ayda returned no open loops list. The result starts: ${text.slice(0, 60)}`)
-    await update($, loopsState, () => ({ loops, error: null }))
+    await update($, loopsState, () => ({ loops, error: null, busy: false }))
   } catch (error) {
-    await update($, loopsState, held => ({ ...held, error: explain(error) }))
+    await update($, loopsState, held => ({ ...held, error: explain(error), busy: false }))
   }
 }
 
 async function decide($: EngineInterface, loop: Loop, status: 'open' | 'done' | 'dismissed') {
+  // The loop leaves the list on the press. The refresh below puts it back if
+  // Ayda refused the verdict.
+  const without = (list: Loop[]) => list.filter(one => one.id !== loop.id)
+  await update($, loopsState, held =>
+    held.loops === null
+      ? held
+      : {
+          ...held,
+          loops: {
+            ...held.loops,
+            your_move: without(held.loops.your_move),
+            waiting: without(held.loops.waiting),
+            done: without(held.loops.done),
+          },
+        },
+  )
   try {
     await callAyda($, 'decide_open_loop', { item_id: loop.id, status })
-    $.ui.toast(`Ayda: marked ${status}: ${loop.text.split(' · ')[0]}`)
+    $.ui.toast(`Ayda: marked ${status}: ${loop.title}`)
   } catch (error) {
     $.ui.toast(explain(error))
   }
@@ -219,7 +265,7 @@ export const register: Register = on => {
     await refresh($)
     const { loops, error } = await read($, loopsState)
 
-    return { text: error ?? `Ayda: ${loops?.counts.your_move ?? 0} your move, ${loops?.counts.waiting ?? 0} waiting.` }
+    return { text: error ?? `${loops?.counts.your_move ?? 0} your move · ${loops?.counts.waiting ?? 0} waiting` }
   })
 
   // `today` defaults to UTC on the server. The member's day is their own zone.
@@ -249,7 +295,7 @@ export const register: Register = on => {
       <Box>
         <Text dimColor>
           Ayda · {loops.counts.your_move} your move · {loops.counts.waiting} waiting
-          {looksDone > 0 ? ` · ${looksDone}${atLeast} look done` : ''}{' '}
+          {looksDone > 0 ? <Text color={WARNING}>{` · ${looksDone}${atLeast} look done`}</Text> : ''}{' '}
         </Text>
         <Button key="open" label="Loops" onPress={() => void openPane($)} />
       </Box>
@@ -257,46 +303,74 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Button, Text } = $.ui.resolve(e)
-    const { loops, error } = await read($, loopsState)
+    const { Box, Button, Link, Text } = $.ui.resolve(e)
+    const { loops, error, busy } = await read($, loopsState)
 
     if (loops === null) return <Text dimColor>{error ?? 'Asking Ayda…'}</Text>
+
+    const verdict = (key: string, label: string, loop: Loop, status: 'open' | 'done' | 'dismissed', primary = false) =>
+      primary ? (
+        <Button key={key} label={label} variant="primary" onPress={() => void decide($, loop, status)} />
+      ) : (
+        <Button key={key} label={label} dimColor onPress={() => void decide($, loop, status)} />
+      )
+
+    // The member's own day, as YYYY-MM-DD: a due date before it is overdue.
+    const today = new Date().toLocaleDateString('en-CA')
 
     const group = (name: string, title: string, list: Loop[], total: number) => (
       <Box flexDirection="column" marginTop={1}>
         <Text bold>
-          {title} ({total})
+          {title}
+          <Text dimColor> · {total > list.length ? `${list.length} of ${total}` : total}</Text>
         </Text>
-        {total > list.length && <Text dimColor>The first {list.length} are shown. Ayda has the rest.</Text>}
         {list.length === 0 && <Text dimColor>Nothing here.</Text>}
-        {list.map((loop, index) => (
-          <Box flexDirection="column" marginTop={1}>
-            <Text>{loop.text}</Text>
-            {loop.evidence && <Text dimColor>“{loop.evidence}”</Text>}
-            {loop.looksDone && (
-              <Text color={WARNING}>Ayda thinks this is done. {loop.reason ?? 'Confirm it, or press Not done.'}</Text>
-            )}
-            {name === 'done' ? (
-              <Box>
-                <Button key={`${name}-${index}-open`} label="Reopen" onPress={() => void decide($, loop, 'open')} />
-              </Box>
-            ) : (
-              <Box columnGap={1}>
-                <Button key={`${name}-${index}-done`} label="Done" onPress={() => void decide($, loop, 'done')} />
-                <Button
-                  key={`${name}-${index}-dismissed`}
-                  label="Dismiss"
-                  onPress={() => void decide($, loop, 'dismissed')}
-                />
-                {loop.looksDone && (
-                  <Button key={`${name}-${index}-open`} label="Not done" onPress={() => void decide($, loop, 'open')} />
+        {/* The loops that wait for a verdict come first. The sort is stable. */}
+        {[...list]
+          .sort((a, b) => Number(b.looksDone) - Number(a.looksDone))
+          .map((loop, index) => (
+            <Box flexDirection="column" marginTop={1}>
+              <Text>{loop.title}</Text>
+              <Text dimColor>
+                {loop.due === undefined ? (
+                  ''
+                ) : name !== 'done' && loop.due < today ? (
+                  <Text color={WARNING}>overdue {loop.due}</Text>
+                ) : (
+                  `due ${loop.due}`
                 )}
-              </Box>
-            )}
-          </Box>
-        ))}
+                {loop.due && (loop.meta || loop.raised) ? ' · ' : ''}
+                {loop.meta}
+                {loop.raised && loop.meta ? ' · ' : ''}
+                {loop.raised?.url ? (
+                  <Link href={loop.raised.url} label={loop.raised.title} />
+                ) : (
+                  (loop.raised?.title ?? '')
+                )}
+              </Text>
+              {loop.evidence && (
+                <Text dimColor italic>
+                  “{loop.evidence}”
+                </Text>
+              )}
+              {loop.looksDone && name !== 'done' && (
+                <Text color={WARNING}>Looks done: {loop.reason ?? 'Ayda found a later record that closes it.'}</Text>
+              )}
+              {name === 'done' ? (
+                <Box>{verdict(`${name}-${index}-open`, 'Reopen', loop, 'open')}</Box>
+              ) : (
+                <Box columnGap={1}>
+                  {verdict(`${name}-${index}-done`, loop.looksDone ? 'Confirm done' : 'Done', loop, 'done', loop.looksDone)}
+                  {loop.looksDone && verdict(`${name}-${index}-open`, 'Not done', loop, 'open')}
+                  {verdict(`${name}-${index}-dismissed`, 'Dismiss', loop, 'dismissed')}
+                </Box>
+              )}
+            </Box>
+          ))}
       </Box>
     )
+
+    const held = loops.your_move.length + loops.waiting.length
 
     return (
       <Box flexDirection="column">
@@ -304,12 +378,21 @@ export const register: Register = on => {
           <Text dimColor>
             {loops.counts.open} open · {loops.counts.done} done
           </Text>
-          <Button key="refresh" label="Refresh" onPress={() => void refresh($)} />
+          {busy ? (
+            <Text dimColor>Asking Ayda…</Text>
+          ) : (
+            <Button key="refresh" label="Refresh" hotkey="r" dimColor onPress={() => void refresh($)} />
+          )}
         </Box>
         {error && <Text color={WARNING}>{error}</Text>}
         {group('move', 'Your move', loops.your_move, loops.counts.your_move)}
         {group('waiting', 'Awaiting others', loops.waiting, loops.counts.waiting)}
         {group('done', 'Done', loops.done, loops.counts.done)}
+        {held < loops.counts.open && (
+          <Box marginTop={1}>
+            <Text dimColor>For the other loops, ask Claude to sweep your open loops.</Text>
+          </Box>
+        )}
       </Box>
     )
   })
@@ -338,7 +421,11 @@ export const register: Register = on => {
         {shown.map((citation, index) => (
           <Box columnGap={1}>
             <Text dimColor>{index + 1}.</Text>
-            {citation.url ? <Link href={citation.url} label={citation.title} /> : <Text>{citation.title}</Text>}
+            {linkable(citation.url) ? (
+              <Link href={linkable(citation.url)!} label={citation.title} />
+            ) : (
+              <Text>{citation.title}</Text>
+            )}
             <Text dimColor>
               {citation.source}
               {citation.started_at ? ` · ${day(citation.started_at)}` : ''}
