@@ -1,5 +1,4 @@
-// The open loops list as the mod holds it, read from the text form of Ayda's
-// `open_loops` result. The server owns the full shape (`OpenLoopsResult` and
+// The open loops list as the mod holds it, read from Ayda's `open_loops` result. The server owns the full shape (`OpenLoopsResult` and
 // `open_loops_text` in the Ayda product repository).
 
 export type Loop = {
@@ -9,6 +8,9 @@ export type Loop = {
   text: string
   // Ayda proposes that the loop is done and waits for the member's verdict.
   looksDone: boolean
+  // Present only when the result came as structured data.
+  evidence?: string
+  reason?: string
 }
 
 export type Loops = {

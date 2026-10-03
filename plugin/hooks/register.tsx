@@ -56,11 +56,9 @@ function readAnswer(output: unknown): Answer | null {
   return isObject(value) && Array.isArray(value.citations) ? (value as Answer) : null
 }
 
-// Claude Code hands a mod only the text form of an MCP result, not the
-// structured one, so the list is read from the text the server writes for a
-// person: a counts line, three headings, and per loop one line and its id.
-// ponytail: read `structuredContent` once `$.mcp.call` passes it on; that
-// also brings back the evidence quote and Ayda's reason for a done proposal.
+// Claude Code hands a mod one text block for an MCP result and no
+// `structuredContent`. That block is either the structured result as JSON or
+// the text the server writes for a person, so the mod reads both.
 const GROUPS = { 'Your move': 'your_move', 'Awaiting others': 'waiting', Done: 'done' } as const
 
 function parseLoops(text: string): Loops | null {
@@ -88,6 +86,58 @@ function parseLoops(text: string): Loops | null {
 }
 
 const day = (iso?: string | null) => (iso ? iso.slice(0, 10) : '')
+
+// One loop of the structured result: the fields of the server's `TodoItem`
+// that the pane shows.
+type RawLoop = {
+  id: string
+  summary: string
+  direction?: string
+  status?: string
+  counterpart_name?: string | null
+  due_at?: string | null
+  raised_at?: string | null
+  raised?: { title: string; source: string; channel?: string | null }
+  evidence?: string | null
+  ayda_confident?: { summary?: string } | null
+}
+
+function toLoop(raw: RawLoop): Loop {
+  const who = raw.counterpart_name ?? 'someone'
+  const parts = [
+    raw.summary,
+    raw.direction === 'await' ? `waiting on ${who}` : `for ${who}`,
+    raw.due_at ? `due ${day(raw.due_at)}` : '',
+    raw.raised ? `raised in ${raw.raised.title} (${raw.raised.channel ?? raw.raised.source}, ${day(raw.raised_at) || 'date unknown'})` : '',
+  ]
+
+  return {
+    id: raw.id,
+    text: parts.filter(Boolean).join(' · '),
+    looksDone: raw.status === 'looks_done',
+    evidence: raw.evidence ?? undefined,
+    reason: raw.ayda_confident?.summary,
+  }
+}
+
+function readLoops(text: string): Loops | null {
+  let value: unknown
+  try {
+    value = JSON.parse(text)
+  } catch {
+    return parseLoops(text)
+  }
+  if (!isObject(value) || !isObject(value.counts)) return null
+
+  const group = (list: unknown) => (Array.isArray(list) ? (list as RawLoop[]).map(toLoop) : [])
+
+  return {
+    your_move: group(value.your_move),
+    waiting: group(value.waiting),
+    done: group(value.done),
+    counts: value.counts as Loops['counts'],
+  }
+}
 
 async function findServer($: EngineInterface): Promise<string> {
   const own = await $.mcp.connect('ayda')
@@ -121,8 +171,9 @@ function explain(error: unknown): string {
 
 async function refresh($: EngineInterface) {
   try {
-    const loops = parseLoops(await callAyda($, 'open_loops', { filter: 'all', limit: 20 }))
-    if (loops === null) throw new Error('Ayda returned no open loops list.')
+    const text = await callAyda($, 'open_loops', { filter: 'all', limit: 20 })
+    const loops = readLoops(text)
+    if (loops === null) throw new Error(`Ayda returned no open loops list. The result starts: ${text.slice(0, 60)}`)
     await update($, loopsState, () => ({ loops, error: null }))
   } catch (error) {
     await update($, loopsState, held => ({ ...held, error: explain(error) }))
@@ -208,7 +259,10 @@ export const register: Register = on => {
         {list.map((loop, index) => (
           <Box flexDirection="column" marginTop={1}>
             <Text>{loop.text}</Text>
-            {loop.looksDone && <Text color={WARNING}>Ayda thinks this is done. Confirm it, or press Not done.</Text>}
+            {loop.evidence && <Text dimColor>“{loop.evidence}”</Text>}
+            {loop.looksDone && (
+              <Text color={WARNING}>Ayda thinks this is done. {loop.reason ?? 'Confirm it, or press Not done.'}</Text>
+            )}
             {name === 'done' ? (
               <Box>
                 <Button key={`${name}-${index}-open`} label="Reopen" onPress={() => void decide($, loop, 'open')} />
