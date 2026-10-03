@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.1 — 2026-10-03
+
+- The open loops pane is easier to read: each loop shows the ask, then one
+  dim line with the counterpart, the due date, the source, the age and a link
+  to the record that raised it.
+- A due date that has passed shows as `overdue`, in the warning colour.
+- A loop that looks done comes first in its group, with a Confirm done button.
+- A verdict removes the loop from the pane at once, and the pane shows when
+  it is asking Ayda. `r` presses Refresh while the pane has the keyboard.
+- `/ayda-loops` no longer prints the Ayda name twice.
+
 ## 1.2.0 — 2026-10-03
 
 - A Claude Code mod (`plugin/hooks/`). Claude Code does not show Ayda's MCP

@@ -1,7 +1,7 @@
 {
   "name": "ayda",
   "displayName": "Ayda",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "types": "./types/index.d.ts",
   "description": "Connect Claude to your company's own Ayda installation, and use its cited company knowledge well: daily briefs, open-loop triage, memories, decision traces, fact checks and onboarding briefs.",
   "author": {
