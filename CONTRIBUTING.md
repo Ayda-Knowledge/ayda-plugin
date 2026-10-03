@@ -31,7 +31,15 @@ claude plugin validate plugin --strict
 claude plugin validate . --strict
 ```
 
-CI runs the same two checks on every pull request.
+CI runs the package and manifest checks when a PR is ready for review, and
+on later updates to that ready PR. Draft updates start no runner. A newer
+PR run cancels the older run. The main-branch check remains the release
+validation for the complete plugin; model evaluations stay outside routine CI.
+
+Run the relevant local check while you edit and record its result in the PR.
+Do not repeat all checks for each checkpoint push. Group related completed
+changes into one plugin release; a merge alone does not require a version bump.
+
 
 A change to a skill's behaviour also needs its eval. Add or update a case
 under `evals/` (a `prompt.md` and its `graders/`), then run the comparison.
