@@ -13,7 +13,10 @@ import type { Loop, Loops, LoopsState } from '../types'
 const PANE = 'ayda-loops'
 const PANE_TITLE = 'Ayda open loops'
 const REFRESH_MS = 15 * 60 * 1000
-const DONE_SHOWN = 5
+// Loops asked for in each group. Claude Code refuses an MCP result above its
+// size limit, and a full list of 20 loops in each group is above it. The
+// counts are for the whole list at any limit. The second value is the retry.
+const GROUP_LIMITS = [5, 2]
 const CITATIONS_SHOWN = 5
 const WARNING = 'yellow'
 
@@ -171,8 +174,13 @@ function explain(error: unknown): string {
 
 async function refresh($: EngineInterface) {
   try {
-    const text = await callAyda($, 'open_loops', { filter: 'all', limit: 20 })
-    const loops = readLoops(text)
+    let text = ''
+    let loops: Loops | null = null
+    for (const limit of GROUP_LIMITS) {
+      text = await callAyda($, 'open_loops', { filter: 'all', limit })
+      loops = readLoops(text)
+      if (loops !== null) break
+    }
     if (loops === null) throw new Error(`Ayda returned no open loops list. The result starts: ${text.slice(0, 60)}`)
     await update($, loopsState, () => ({ loops, error: null }))
   } catch (error) {
@@ -250,11 +258,12 @@ export const register: Register = on => {
 
     if (loops === null) return <Text dimColor>{error ?? 'Asking Ayda…'}</Text>
 
-    const group = (name: string, title: string, list: Loop[]) => (
+    const group = (name: string, title: string, list: Loop[], total: number) => (
       <Box flexDirection="column" marginTop={1}>
         <Text bold>
-          {title} ({list.length})
+          {title} ({total})
         </Text>
+        {total > list.length && <Text dimColor>The first {list.length} are shown. Ayda has the rest.</Text>}
         {list.length === 0 && <Text dimColor>Nothing here.</Text>}
         {list.map((loop, index) => (
           <Box flexDirection="column" marginTop={1}>
@@ -294,9 +303,9 @@ export const register: Register = on => {
           <Button key="refresh" label="Refresh" onPress={() => void refresh($)} />
         </Box>
         {error && <Text color={WARNING}>{error}</Text>}
-        {group('move', 'Your move', loops.your_move)}
-        {group('waiting', 'Awaiting others', loops.waiting)}
-        {group('done', 'Done', loops.done.slice(0, DONE_SHOWN))}
+        {group('move', 'Your move', loops.your_move, loops.counts.your_move)}
+        {group('waiting', 'Awaiting others', loops.waiting, loops.counts.waiting)}
+        {group('done', 'Done', loops.done, loops.counts.done)}
       </Box>
     )
   })
