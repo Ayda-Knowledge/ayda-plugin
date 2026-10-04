@@ -3,7 +3,7 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.1.1-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.2.1-6A00E9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.
@@ -37,24 +37,6 @@ Claude selects a skill when your request fits it. In Claude Code you can also
 start one by name, for example `/ayda:ayda-daily-brief`. Name Ayda when you
 want something kept there ("save this to Ayda"): in Claude Code a plain
 "remember this" goes to Claude's own memory.
-
-## In Claude Code
-
-Claude Code does not show Ayda's panels, so the plugin draws its own there:
-
-- **Open loops.** A row above the prompt shows how many loops are your move
-  and how many wait on others. `/ayda-loops` opens the list with the
-  record that raised each loop and a button for each verdict. A press goes directly to
-  Ayda: no model reads or writes on the way.
-- **Sources.** Each Ayda answer shows its sources as links, its temporal
-  status, and a warning when two sources disagree or a quoted source changed.
-- **Your day.** `today` uses your own time zone.
-
-The plugin reads your open loops when a session starts and each 15 minutes
-after that. The pane shows the first five loops of each group; the counts
-are for your whole list. In auto mode, Claude Code refuses a call that the
-plugin makes itself: allow the Ayda tools `open_loops` and
-`decide_open_loop` in `/permissions` to use the row and the pane there.
 
 ## Try it
 
@@ -122,8 +104,8 @@ the host you enter. It sends nothing to Ubundi or to any other service.
 
 Ayda can change only two things, and only after you say so:
 
-- `ayda-loop-sweep`, or a verdict button in the open loops pane, records
-  your verdict (open, done or dismissed) on one of your own open loops.
+- `ayda-loop-sweep` records your verdict (open, done or dismissed) on one of
+  your own open loops.
 - `ayda-remember` stores a sentence you approve as your own memory record.
   Ayda keeps the decisions it reads from that sentence pending until you
   confirm them in Ayda.
@@ -156,4 +138,3 @@ Ideas for new skills and fixes are welcome. Read
 
 ## Licence
 
-[MIT](LICENSE) © 2026 Ubundi

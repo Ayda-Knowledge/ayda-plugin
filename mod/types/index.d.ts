@@ -3,9 +3,16 @@
 
 export type Loop = {
   id: string
-  // The loop as the server wrote it for a person: the ask, who it is with,
-  // a due date, and the record that raised it.
-  text: string
+  // The ask itself.
+  title: string
+  // Who it is with, and where and when it was raised.
+  meta: string
+  // The due day, as YYYY-MM-DD. Present only when the result came as
+  // structured data; the text form has it in `meta`.
+  due?: string
+  // The record that raised the loop. Present only when the result came as
+  // structured data; the text form has it in `meta`.
+  raised?: { title: string; url?: string }
   // Ayda proposes that the loop is done and waits for the member's verdict.
   looksDone: boolean
   // Present only when the result came as structured data.
@@ -20,7 +27,8 @@ export type Loops = {
   counts: { open: number; your_move: number; waiting: number; done: number }
 }
 
-export type LoopsState = { loops: Loops | null; error: string | null }
+// `busy` is true while a call for the list is in flight.
+export type LoopsState = { loops: Loops | null; error: string | null; busy: boolean }
 
 declare module 'claude-code' {
   interface PluginState {

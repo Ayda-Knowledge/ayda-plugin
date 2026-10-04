@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 — 2026-10-04
+
+- The Claude Code mod is removed from the plugin for now: the open loops row
+  and pane, `/ayda-loops`, the source cards and the time zone on `today`.
+  Auto mode refuses a call that the mod makes itself. The code stays in
+  `mod/` in the repository and is not installed.
+
 ## 1.2.0 — 2026-10-03
 
 - A Claude Code mod (`plugin/hooks/`). Claude Code does not show Ayda's MCP
