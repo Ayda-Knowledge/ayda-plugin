@@ -1,15 +1,11 @@
 # Changelog
 
-## 1.2.1 — 2026-10-03
+## 1.2.1 — 2026-10-04
 
-- The open loops pane is easier to read: each loop shows the ask, then one
-  dim line with the counterpart, the due date, the source, the age and a link
-  to the record that raised it.
-- A due date that has passed shows as `overdue`, in the warning colour.
-- A loop that looks done comes first in its group, with a Confirm done button.
-- A verdict removes the loop from the pane at once, and the pane shows when
-  it is asking Ayda. `r` presses Refresh while the pane has the keyboard.
-- `/ayda-loops` no longer prints the Ayda name twice.
+- The Claude Code mod is removed from the plugin for now: the open loops row
+  and pane, `/ayda-loops`, the source cards and the time zone on `today`.
+  Auto mode refuses a call that the mod makes itself. The code stays in
+  `mod/` in the repository and is not installed.
 
 ## 1.2.0 — 2026-10-03
 

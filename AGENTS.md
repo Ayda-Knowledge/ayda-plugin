@@ -28,17 +28,17 @@ live in the Ayda product repository; this repository only instructs agents.
 
 ## The Claude Code mod
 
-`plugin/hooks/register.tsx` is a Claude Code mod: it draws Ayda results that
-Claude Code would show as plain text, and calls Ayda directly for the open
-loops list. It is for Claude Code only; the skills must work without it.
+`mod/` holds a Claude Code mod that is not installed. It draws the open loops
+list and the source cards in Claude Code, and calls Ayda directly for the
+list. It is outside `plugin/` because auto mode refuses a call that a mod
+makes itself. To bring it back, move `mod/hooks/` and `mod/types/` into
+`plugin/` and name the types in `plugin.json`
+(`"types": "./types/index.d.ts"`).
 
 - It calls only the member's own Ayda server, and writes only
   `decide_open_loop`, only from a button the member pressed.
-- Ayda's result shapes live in the product repository. `plugin/types/`
-  holds only the fields the mod draws.
-- Load it from disk with `claude --plugin-dir plugin`. That session reads
-  the host from `pluginConfigs.ayda.options.installation_host` in the
-  user settings.
+- Ayda's result shapes live in the product repository. `mod/types/` holds
+  only the fields the mod draws.
 
 ## Versions
 

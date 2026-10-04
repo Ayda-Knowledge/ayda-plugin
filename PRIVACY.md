@@ -10,8 +10,6 @@ their own terms.
   installation, at the host you or your organisation enter.
 - Claude sends your questions to that installation, signed in as you. Ayda
   answers only from records your account can access.
-- In Claude Code, the plugin also reads your open loops from that
-  installation when a session starts and each 15 minutes after that.
 - The plugin sends nothing to Ubundi or to any other service, and it has no
   analytics or tracking.
 
@@ -20,8 +18,7 @@ their own terms.
 The plugin stores no data. It changes only two things in your own Ayda, and
 only after you say so:
 
-- your verdict on one of your own open loops (`ayda-loop-sweep`, or a
-  verdict button you press in the open loops pane in Claude Code);
+- your verdict on one of your own open loops (`ayda-loop-sweep`);
 - a sentence you approve as your own memory record (`ayda-remember`).
 
 Your Ayda installation keeps both under your company's retention rules.
