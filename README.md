@@ -3,16 +3,17 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.2.1-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.2.2-6A00E9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.
 It reads the sources your company connects, such as Slack, Google Drive,
 Gmail and GitHub, and answers with a citation for each statement.
 
-This plugin connects Claude to your company's own Ayda installation. It also
-adds skills that make Claude use Ayda well: fewer calls, a citation on each
-statement, and the correct date for each fact.
+This plugin adds skills that make Claude use your company's own Ayda
+installation well: fewer calls, a citation on each statement, and the correct
+date for each fact. You connect Claude to your installation once, in the
+install steps below.
 
 ## Skills
 
@@ -55,8 +56,8 @@ flowchart LR
   ayda --> sources[(Slack, Drive, Gmail, GitHub and more)]
 ```
 
-- Ayda runs in your company's own environment. The plugin connects to the
-  host you give it and to nothing else.
+- Ayda runs in your company's own environment. Claude connects to the host
+  you give it, and the skills use that connection and no other.
 - You sign in with your company account. Ayda answers as you and shows only
   the records you have access to.
 - Each answer comes with its sources, so you can open the record behind each
@@ -75,20 +76,23 @@ the host name, ask your Ayda admin.
 /plugin install ayda@ayda
 ```
 
-Enter your installation's host name when the plugin asks for it. Claude opens
-a sign-in page the first time it calls Ayda.
+Then connect your installation, with your own host name in the URL:
+
+```bash
+claude mcp add --transport http --scope user ayda https://<your Ayda host>/mcp
+```
+
+Claude opens a sign-in page the first time it calls Ayda.
 
 **Claude apps (claude.ai, desktop and Cowork)**
 
-1. In **Customize > Plugins**, select **Add > Add marketplace**, enter
-   `Ayda-Knowledge/ayda-plugin`, and install **Ayda**.
+1. In **Customize > Plugins**, find **Ayda** in the directory and install it.
 2. Connect your installation:
    - If your organisation already has an Ayda connector, you are done. The
-     skills use it, and the plugin's **Connectors** tab can still show
-     **Not added**.
-   - Otherwise, open the plugin's **Connectors** tab and select **Connect**.
-     Replace the part in braces with your Ayda host, so the URL reads
-     `https://<your Ayda host>/mcp`, then sign in.
+     skills use it.
+   - Otherwise, in **Customize > Connectors**, add a custom connector named
+     `Ayda` with the URL `https://<your Ayda host>/mcp`, then sign in. On a
+     Team or Enterprise plan, an Owner can add it for the organisation.
 
 **Other agents**
 
@@ -99,7 +103,7 @@ each agent.
 
 ## Data and privacy
 
-The plugin sends your questions to your company's own Ayda installation, at
+Claude sends your questions to your company's own Ayda installation, at
 the host you enter. It sends nothing to Ubundi or to any other service.
 
 Ayda can change only two things, and only after you say so:
