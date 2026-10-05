@@ -90,9 +90,10 @@ request starts no CI run: record the checks you ran in it. The Check workflow
 runs on `dev` after each merge; whoever merged the cause of a red run fixes or
 reverts it through a pull request.
 
-`main` is the released branch. It takes a commit of `dev` only by promotion, and the
-required **Promotion evidence** check proves that commit: it is on `dev`,
-`main` is its ancestor, and its Check run passed.
+`main` is the released branch. It takes a commit of `dev` by promotion, or one urgent
+fix by a hotfix ("Hotfixes" below). The required **Promotion evidence**
+check proves a promoted commit: it is on `dev`, `main` is its ancestor, and
+its Check run passed.
 
 1. Read the run for the commit you will promote. The script prints the
    candidate, its tree, `main` and the run URL when the commit can be promoted:
@@ -120,6 +121,42 @@ required **Promotion evidence** check proves that commit: it is on `dev`,
 
 **Done:** `main`'s tree equals the promoted commit's tree, and `dev` contains
 `main`.
+
+## Hotfixes
+
+Use a hotfix when a fix must reach `main` without the unreleased work on
+`dev`. The Promotion evidence check accepts a commit that is not on `dev`
+when the Check run passed for it on a `hotfix/` branch. A fix that can wait
+goes through `dev` and a promotion.
+
+1. Branch from `main`'s head, make the fix, and push:
+
+   ```bash
+   git fetch origin
+   git switch -c hotfix/<name> origin/main
+   git push -u origin hotfix/<name>
+   ```
+
+2. A pull request starts no run, so dispatch the check on the branch and wait
+   for it to pass. A later commit needs a new run:
+
+   ```bash
+   gh workflow run check.yml -R Ayda-Knowledge/ayda-plugin --ref hotfix/<name>
+   gh run watch -R Ayda-Knowledge/ayda-plugin
+   ```
+
+3. Open the pull request into `main`, wait for Promotion evidence, and merge:
+
+   ```bash
+   gh pr create -R Ayda-Knowledge/ayda-plugin --base main --head hotfix/<name> \
+     --title "<title>" --body-file <path>
+   gh pr checks <number> -R Ayda-Knowledge/ayda-plugin --required --watch
+   gh pr merge <number> -R Ayda-Knowledge/ayda-plugin --merge
+   ```
+
+4. Merge `main` back into `dev` through a pull request.
+
+**Done:** the fix is on `main`, and `dev` contains `main`.
 
 ## Release
 
