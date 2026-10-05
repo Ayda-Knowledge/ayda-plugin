@@ -11,6 +11,39 @@ propose a change and what a change must pass.
 - **A fix:** open a pull request. Say which skill it changes and show the
   behaviour before and after, for example a short transcript.
 
+## Pull requests and issues from the command line
+
+The local template owns a record's sections:
+[`.github/pull_request_template.md`](.github/pull_request_template.md) for a
+pull request, the matching form in [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/)
+for an issue. GitHub applies a template only in the browser. `gh` and the API
+apply none, so the author fills it in.
+
+1. Read the template. For an issue form, write each field `label` as a `##`
+   heading, in the form's order, and pass the form's `labels` with `--label`.
+2. Write the body to a temporary file outside the checkout. Fill each section
+   with what happened: the commands that ran, their results, and each check
+   that did not run. A section with nothing to report says `None`. This
+   repository is public: remove company data first.
+3. Create or edit the record from that file, with an explicit repository and
+   base:
+
+   ```bash
+   gh pr create -R Ayda-Knowledge/ayda-plugin --base main --title "<title>" --body-file <path>
+   gh pr edit <number> -R Ayda-Knowledge/ayda-plugin --body-file <path>
+   gh issue create -R Ayda-Knowledge/ayda-plugin --title "<title>" --label <label> --body-file <path>
+   ```
+
+4. Read the record back:
+
+   ```bash
+   gh pr view <number> -R Ayda-Knowledge/ayda-plugin --json title,body,baseRefName,url
+   gh issue view <number> -R Ayda-Knowledge/ayda-plugin --json title,body,labels,url
+   ```
+
+**Done:** the readback shows the intended repository and base, every template
+section, and evidence in place of each template comment.
+
 ## Write a skill
 
 [AGENTS.md](AGENTS.md) holds the rules for a skill in this repository. In

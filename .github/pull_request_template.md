@@ -1,13 +1,16 @@
-## What changes
+## Change
+<!-- State the problem and the resulting behavior. -->
 
-<!-- Which skill, and what it now does differently. -->
+## Related work
+<!-- Link the issue or source request. Say "No issue" when appropriate. -->
 
-## Evidence
+## Verification
+<!-- Give commands, results and runtime evidence. Name anything not checked.
+     CONTRIBUTING.md lists the checks; a behaviour change also needs its eval result. -->
 
-<!-- A short before/after transcript, with company data removed. -->
+## Delivery notes
+<!-- State the VERSION, plugin version and CHANGELOG.md changes, or "None". -->
 
-## Checklist
-
-- [ ] `python3 scripts/check-skills.py` passes
-- [ ] `claude plugin validate plugin --strict` and `claude plugin validate . --strict` pass
-- [ ] `VERSION`, the plugin `version` and `CHANGELOG.md` are updated when behaviour changes
+## Skill or mod behavior
+<!-- Name the skill or mod and what it now does differently. Give a short
+     before/after transcript with company data removed, or "No behavior change". -->
