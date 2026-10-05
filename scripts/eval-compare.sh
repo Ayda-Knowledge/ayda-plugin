@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Score the eval suite twice against the same mocked Ayda server: once with the
-# plugin's skills, once with only its MCP connection. The difference is what
+# plugin's skills, once with the Ayda connection alone. The difference is what
 # the skills add. Writes evals/RESULTS.md.
 #
-# The built-in no-plugin baseline cannot measure this: without the plugin there
-# is no Ayda server at all, so every case fails for a reason the skills do not
-# cause.
+# The mock stands in for the member's own `ayda` server, which the plugin does
+# not declare, so both arms get it and graders name its tools `mcp__ayda__*`.
 set -euo pipefail
 
 repo=$(cd "$(dirname "$0")/.." && pwd)
