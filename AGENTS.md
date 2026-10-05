@@ -40,6 +40,13 @@ makes itself. To bring it back, move `mod/hooks/` and `mod/types/` into
 - Ayda's result shapes live in the product repository. `mod/types/` holds
   only the fields the mod draws.
 
+## GitHub records
+
+Before creating or editing a PR or issue, read
+[CONTRIBUTING.md](CONTRIBUTING.md), "Pull requests and issues from the command
+line", and the matching template in `.github/`. Use its sections and record
+actual evidence.
+
 ## Versions
 
 Bump a skill's `VERSION` when its behaviour changes, and the plugin
