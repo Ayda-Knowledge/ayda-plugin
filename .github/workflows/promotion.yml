@@ -1,0 +1,48 @@
+# The gate on main. A pull request into main is a promotion: its head is a
+# commit of dev that the Check run already validated, and this check proves
+# it without building or testing anything. It runs from main, the pull request
+# base, so a candidate cannot change its own gate, and it reads the candidate
+# through Git objects and the API only. See CONTRIBUTING.md.
+
+name: Promotion
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: promotion-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    name: Promotion evidence
+    runs-on: ubuntu-latest
+    steps:
+      # The default ref for this event is the base branch: the script below is
+      # main's copy, never the candidate's.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Verify the candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$HEAD_REPO" != "$REPO" ]; then
+            echo "Promotion refused: the candidate comes from $HEAD_REPO, not $REPO." >&2
+            exit 1
+          fi
+          git fetch --no-tags origin \
+            "+refs/heads/dev:refs/remotes/origin/dev" \
+            "+refs/heads/main:refs/remotes/origin/main" \
+            "$CANDIDATE"
+          bash scripts/promotion-evidence.sh "$CANDIDATE" "$(git rev-parse origin/main)" | tee -a "$GITHUB_STEP_SUMMARY"
