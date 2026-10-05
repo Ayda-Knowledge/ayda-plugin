@@ -1,13 +1,13 @@
 # Privacy
 
-This statement covers the Ayda plugin for Claude: its skills and its
-connection settings. Your company's Ayda installation and Claude each have
+This statement covers the Ayda plugin for Claude: its skills and the
+connection they use. Your company's Ayda installation and Claude each have
 their own terms.
 
 ## What the plugin sends, and where
 
-- The plugin connects Claude to one server: your company's own Ayda
-  installation, at the host you or your organisation enter.
+- The skills use one server: your company's own Ayda installation, at the
+  host you or your organisation connect to Claude.
 - Claude sends your questions to that installation, signed in as you. Ayda
   answers only from records your account can access.
 - The plugin sends nothing to Ubundi or to any other service, and it has no

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.2 — 2026-10-05
+
+- The plugin no longer declares the Ayda connector. The Claude apps cannot
+  ask for your installation's host name, so the connector showed
+  **Not added** and **Connect** did nothing. The plugin now holds the skills
+  only, and you connect your installation once: a custom connector in the
+  Claude apps, or `claude mcp add` in Claude Code. The README has the steps.
+- If you used the plugin's connector in Claude Code, add it again:
+  `claude mcp add --transport http --scope user ayda https://<your Ayda host>/mcp`.
+
 ## 1.2.1 — 2026-10-04
 
 - The Claude Code mod is removed from the plugin for now: the open loops row

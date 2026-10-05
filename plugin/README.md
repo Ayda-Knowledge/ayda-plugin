@@ -2,9 +2,8 @@
 
 Ayda is company memory that your company owns and runs. It reads the sources
 your company connects, such as Slack, Google Drive, Gmail and GitHub, and
-answers with a citation for each statement. This plugin connects Claude to
-your company's own Ayda installation and adds skills that make Claude use it
-well: fewer calls, a citation on each statement, and the correct date for each
+answers with a citation for each statement. This plugin adds skills that make Claude use
+your company's own Ayda installation well: fewer calls, a citation on each statement, and the correct date for each
 fact.
 
 ## Skills
@@ -25,9 +24,11 @@ fact.
 ## Use it
 
 Your company needs an Ayda installation with **Agent access** switched on.
-In Claude Code, the plugin asks for your installation's host name. In the
-Claude apps, use your organisation's Ayda connector, or connect the plugin's
-connector and replace the part in braces with your host. Then ask, for
+Connect Claude to it once, with your own host name in the URL
+`https://<your Ayda host>/mcp`. In the Claude apps, use your organisation's
+Ayda connector, or add a custom connector with that URL in
+**Customize > Connectors**. In Claude Code, run
+`claude mcp add --transport http --scope user ayda <URL>`. Then ask, for
 example, "Catch me up on what I missed yesterday."
 
 ## Data
