@@ -8,7 +8,7 @@ propose a change and what a change must pass.
 - **A new skill:** open an issue with the **Skill idea** form first. Say what
   the member asks for, which Ayda tools the skill combines, and why one tool
   call is not enough.
-- **A fix:** open a pull request. Say which skill it changes and show the
+- **A fix:** open a pull request against `dev`. Say which skill it changes and show the
   behaviour before and after, for example a short transcript.
 
 ## Pull requests and issues from the command line
@@ -29,7 +29,7 @@ apply none, so the author fills it in.
    base:
 
    ```bash
-   gh pr create -R Ayda-Knowledge/ayda-plugin --base main --title "<title>" --body-file <path>
+   gh pr create -R Ayda-Knowledge/ayda-plugin --base dev --title "<title>" --body-file <path>
    gh pr edit <number> -R Ayda-Knowledge/ayda-plugin --body-file <path>
    gh issue create -R Ayda-Knowledge/ayda-plugin --title "<title>" --label <label> --body-file <path>
    ```
@@ -64,10 +64,9 @@ claude plugin validate plugin --strict
 claude plugin validate . --strict
 ```
 
-CI runs the package and manifest checks when a PR is ready for review, and
-on later updates to that ready PR. Draft updates start no runner. A newer
-PR run cancels the older run. The main-branch check remains the release
-validation for the complete plugin; model evaluations stay outside routine CI.
+A pull request starts no CI run. CI runs the package and manifest checks on
+`dev` after each merge, and `main` takes only a commit whose run passed
+("Branches" below). Model evaluations stay outside routine CI.
 
 Run the relevant local check while you edit and record its result in the PR.
 Do not repeat all checks for each checkpoint push. Group related completed
@@ -84,7 +83,46 @@ scripts/eval-compare.sh            # RUNS=3 and MODEL=claude-sonnet-5-5 by defau
 
 Commit the updated `evals/RESULTS.md` with the change.
 
+## Branches
+
+Work merges into `dev` through a pull request from a short branch. A pull
+request starts no CI run: record the checks you ran in it. The Check workflow
+runs on `dev` after each merge; whoever merged the cause of a red run fixes or
+reverts it through a pull request.
+
+`main` is the released branch. It takes a commit of `dev` only by promotion, and the
+required **Promotion evidence** check proves that commit: it is on `dev`,
+`main` is its ancestor, and its Check run passed.
+
+1. Read the run for the commit you will promote. The script prints the
+   candidate, its tree, `main` and the run URL when the commit can be promoted:
+
+   ```bash
+   git fetch origin
+   sha=$(git rev-parse origin/dev)
+   REPO=Ayda-Knowledge/ayda-plugin bash scripts/promotion-evidence.sh "$sha" origin/main
+   ```
+
+2. Freeze the commit on a branch and open the pull request into `main`. Put
+   the script's lines in its Verification section:
+
+   ```bash
+   git push origin "${sha}:refs/heads/promotion/${sha:0:8}"
+   gh pr create -R Ayda-Knowledge/ayda-plugin --base main --head "promotion/${sha:0:8}" \
+     --title "Promote ${sha:0:8} to main" --body-file <path>
+   gh pr checks <number> -R Ayda-Knowledge/ayda-plugin --required --watch
+   gh pr merge <number> -R Ayda-Knowledge/ayda-plugin --merge
+   ```
+
+3. Merge `main` back into `dev` through a pull request. The promotion's merge
+   commit exists only on `main`, and the next promotion is refused until `dev`
+   contains it.
+
+**Done:** `main`'s tree equals the promoted commit's tree, and `dev` contains
+`main`.
+
 ## Release
 
 Raise the skill's `VERSION` when its behaviour changes, raise `version` in
 `plugin/.claude-plugin/plugin.json`, and add an entry to [CHANGELOG.md](CHANGELOG.md).
+A release reaches `main` by promotion.

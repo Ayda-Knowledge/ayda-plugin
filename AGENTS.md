@@ -60,3 +60,7 @@ python3 scripts/check-skills.py
 claude plugin validate plugin --strict
 claude plugin validate . --strict
 ```
+
+A pull request targets `dev` and starts no CI run, so record these results in
+it. Merged into `dev`, passed on `dev`, and promoted into `main` are three
+separate states; [CONTRIBUTING.md](CONTRIBUTING.md), "Branches", owns the flow.
