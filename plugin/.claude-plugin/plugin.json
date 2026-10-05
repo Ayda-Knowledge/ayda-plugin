@@ -1,8 +1,8 @@
 {
   "name": "ayda",
   "displayName": "Ayda",
-  "version": "1.2.1",
-  "description": "Connect Claude to your company's own Ayda installation, and use its cited company knowledge well: daily briefs, open-loop triage, memories, decision traces, fact checks and onboarding briefs.",
+  "version": "1.2.2",
+  "description": "Skills that make Claude use your company's own Ayda installation well, with cited company knowledge: daily briefs, open-loop triage, memories, decision traces, fact checks and onboarding briefs.",
   "author": {
     "name": "Ubundi"
   },
@@ -15,19 +15,5 @@
     "company-memory",
     "mcp",
     "citations"
-  ],
-  "userConfig": {
-    "installation_host": {
-      "type": "string",
-      "title": "Ayda installation host",
-      "description": "The host name of your company's Ayda, without https:// (for example ayda.example.com). Ask your Ayda admin if you do not know it.",
-      "required": true
-    }
-  },
-  "mcpServers": {
-    "ayda": {
-      "type": "http",
-      "url": "https://${user_config.installation_host}/mcp"
-    }
-  }
+  ]
 }

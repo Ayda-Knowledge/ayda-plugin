@@ -1,10 +1,11 @@
 # AGENTS.md
 
 This repository is the Ayda plugin: portable skills that teach an agent to use
-a company's Ayda MCP server well, plus the plugin and marketplace manifests
-that connect that server. `plugin/` holds only what Claude installs;
-repository tooling stays outside it, because the Claude directory scans every
-file in the plugin folder. The server itself, its tools and their contracts
+a company's Ayda MCP server well, plus the plugin and marketplace manifests.
+The plugin declares no MCP server: the Claude apps cannot ask a member for a
+host name, so each member connects their own `ayda` server. `plugin/` holds
+only what Claude installs; repository tooling stays outside it, because the
+Claude directory scans every file in the plugin folder. The server itself, its tools and their contracts
 live in the Ayda product repository; this repository only instructs agents.
 
 ## Writing a skill

@@ -17,6 +17,6 @@ welcome through the same channel; we route it to the product team.
 
 ## What the plugin can do
 
-The plugin connects only to the Ayda installation whose host you enter. Its
+The skills use only the Ayda installation that you connect to Claude. Its
 only writes are your own open-loop verdicts and the memory sentences you
 approve. [README.md](README.md#data-and-privacy) describes both.
