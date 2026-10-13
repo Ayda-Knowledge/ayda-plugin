@@ -2,6 +2,11 @@ name: Skill problem
 description: A skill did the wrong thing, or Claude did not use it.
 labels: [bug]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is public. Remove credentials and company data before
+        you paste a transcript or other evidence.
   - type: input
     id: skill
     attributes:
@@ -16,10 +21,38 @@ body:
       placeholder: Claude Code 2.1.284
     validations:
       required: true
+  - type: input
+    id: version
+    attributes:
+      label: Plugin version
+      description: The installed plugin version, if known.
+      placeholder: 1.2.2
   - type: textarea
     id: what
     attributes:
       label: What happened
-      description: What you asked, what the agent did, and what you expected. Remove company data before you paste a transcript.
+      description: What you asked, what the agent did, and what you expected.
     validations:
       required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The shortest steps that show the problem, or the reason it cannot be reproduced.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: A transcript or a screenshot, with company data removed.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected and how badly.
+  - type: textarea
+    id: suspected-cause
+    attributes:
+      label: Suspected cause
+      description: A hypothesis, not a finding. Say what would confirm it.

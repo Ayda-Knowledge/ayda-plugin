@@ -2,7 +2,9 @@
 <!-- State the problem and the resulting behavior. -->
 
 ## Related work
-<!-- Link the issue or source request. Say "No issue" when appropriate. -->
+<!-- Write "Closes #<number>", or "No issue: <reason>". A merge into dev does
+     not close the issue: the person who merges closes it with a link to this
+     pull request. -->
 
 ## Verification
 <!-- Give commands, results and runtime evidence. Name anything not checked.
