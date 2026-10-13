@@ -50,9 +50,10 @@ actual evidence.
 
 ## Versions
 
-Bump a skill's `VERSION` when its behaviour changes, and the plugin
-`version` in `plugin/.claude-plugin/plugin.json` on every release. A new skill is
-added to `EXPECTED` in `scripts/check-skills.py`.
+Bump a skill's `VERSION` when its behaviour changes. A new skill is added to
+`EXPECTED` in `scripts/check-skills.py`. Before a promotion or a hotfix, read
+[CONTRIBUTING.md](CONTRIBUTING.md#release), "Release": it owns the rule for
+the plugin `version` and the `CHANGELOG.md` entry.
 
 ## Check
 
