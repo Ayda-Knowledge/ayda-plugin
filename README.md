@@ -131,6 +131,10 @@ skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
 
 - [`plugin/`](plugin/) is the plugin itself: the manifest, icon and skills.
   It is what Claude installs and what the Claude directory reads.
+- [`mod/`](mod/) is a Claude Code mod that draws open loops and source cards.
+  It is not installed: [AGENTS.md](AGENTS.md#the-claude-code-mod) says why and
+  how to bring it back.
+- [`evals/`](evals/) holds the eval suite.
 - Everything else, such as `scripts/`, CI and this README, supports its
   development and is not installed.
 
@@ -142,3 +146,4 @@ Ideas for new skills and fixes are welcome. Read
 
 ## Licence
 
+[MIT](LICENSE) © 2026 Ubundi
