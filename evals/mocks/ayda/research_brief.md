@@ -20,5 +20,5 @@
   ],
   "truncated": false,
   "latency_ms": 20000,
-  "redaction_notice": "Ayda masks credentials and identity numbers it recognises before storage; a number it cannot verify is stored as written. Other sensitive content stays unchanged."
+  "redaction_notice": "Ayda redacts each record once, for secrets and identity numbers, before storage; Google Drive files are stored as written."
 }

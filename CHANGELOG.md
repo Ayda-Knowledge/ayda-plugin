@@ -2,8 +2,9 @@
 
 ## 1.3.0 — 2026-10-19
 
-The skills now read the fields that Ayda on the Ayda engine (core 1.0.0 and
-later) sends, and leave the routing rules to Ayda's own tool descriptions.
+The skills now read the fields that Ayda core 1.3.0 and later sends, and
+leave the routing rules to Ayda's own tool descriptions. On an earlier core,
+`ayda-daily-brief` calls `whoami`, which that core does not have.
 
 - `ayda-guide` 1.1.0: a sentence that Ayda's answer check flags is verified
   against its record or left out. It reads every temporal status, the

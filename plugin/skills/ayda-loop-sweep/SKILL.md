@@ -15,7 +15,8 @@ of their answers.
    ID can sit in two groups; queue it once. Order the queue: loops that look
    done first, then `your_move` by due date and age, then `waiting` loops
    older than a week. Leave `done` loops out. Done when the
-   queue is ordered and you have stated the `counts` and any truncation.
+   queue is ordered and you have stated the `counts`, and any cut that
+   `truncated` or `size_limited` reports.
 2. **Prepare a batch of up to five.** For each loop give the ask, the
    counterpart, the record that raised it, the due date, and a proposal:
    - Looks done: read the record in the loop's `resolution` or

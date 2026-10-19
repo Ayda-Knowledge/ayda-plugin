@@ -25,9 +25,11 @@ live in the Ayda product repository; this repository only instructs agents.
   `evals/`, with fixtures from a fictional company: this repository is
   public, so no real record goes into a mock.
 - `evals/mocks/ayda/_tools.json` copies the tool names, descriptions and
-  input schemas of the live server. When core changes them (its
-  `backend/app/mcp/guidance.py` and `server.py`), refresh the file and each
-  mock whose result shape changed, then run the comparison again.
+  input schemas of the live server, and each mock copies a live result
+  shape. Core owns both: the descriptions in `backend/app/mcp/guidance.py`
+  and `server.py`, the result shapes in `backend/app/mcp/tools.py` and
+  `backend/app/core/models/`. When they change, refresh the matching file,
+  then run the comparison again.
 - Grade behaviour, not skill invocation: `scripts/eval-compare.sh` scores the
   same cases without the skills, and only behaviour graders compare fairly.
 

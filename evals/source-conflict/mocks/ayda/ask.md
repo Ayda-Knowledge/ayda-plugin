@@ -19,7 +19,9 @@
           "valid_from": "2026-09-01",
           "status": "active",
           "conflict_status": "authority_conflict",
-          "evidence_status": "verified"
+          "evidence_status": "verified",
+          "assertion_id": "decision:eval-travel-limit-1",
+          "source_record_id": "slack:C0OPS:1790300000.400"
         }
       ]
     },
@@ -39,13 +41,19 @@
           "valid_from": "2026-01-15",
           "status": "active",
           "conflict_status": "authority_conflict",
-          "evidence_status": "verified"
+          "evidence_status": "verified",
+          "assertion_id": "decision:eval-travel-limit-2",
+          "source_record_id": "doc:gdoc:finance-handbook"
         }
       ]
     }
   ],
   "temporal": {
+    "effective_at": "2026-10-19T08:00:00+00:00",
     "status": "active",
+    "assertions_considered": 2,
+    "assertions_active": 2,
+    "coverage_status": "complete",
     "requested": false
   },
   "latency_ms": 1100,

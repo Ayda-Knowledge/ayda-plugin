@@ -13,8 +13,8 @@ decide an answer, and whose word permits a write.
 ## Spend a budget
 
 A member gets 30 calls a minute across all tools, and each call has a
-60-second deadline. An `ask`, `search` or `today` result can run to tens of
-thousands of characters, and some hosts save a large result to a file.
+60-second deadline. An `ask` or `search` result can run to tens of thousands
+of characters, and some hosts save a large result to a file.
 
 - From a saved `ask` result, read `answer`, `temporal`, `check`, and each
   citation's `id`, `title` and `url`. Read a citation's `snippet` and
@@ -36,10 +36,12 @@ result in `check`.
   not exist (`invalid citation`). Treat a flagged sentence as a claim to
   verify: read its cited record with `get_record`, then give the sentence
   with that evidence, or leave it out and say why.
-- `guarded` false means no check ran, and `claims_unchecked` counts the
-  sentences with nothing to compare. Neither is a pass.
-- An unflagged sentence matched the figures and names of its sources. That
-  supports its wording, not its meaning.
+- No `check` block, or `guarded` false, means no check ran. Neither is a
+  pass.
+- The check compares only cited sentences that hold a figure or a name.
+  Such a sentence that is not flagged matched its sources' figures and names,
+  which supports its wording, not its meaning. Every other sentence was not
+  compared; `claims_unchecked` counts the cited ones.
 
 ## Read time correctly
 
@@ -51,9 +53,9 @@ Two instants, two questions:
   the day of the incident". An installation can switch it off; when it is
   refused, say so and use `effective_at` or `timeline` instead.
 
-`ask` leaves out its `temporal` block when the question gave no date and no
-evidence holds one. When the block is present, report `temporal.status`
-beside the answer:
+`ask` leaves out its `temporal` block when the call passed no `effective_at`
+or `known_at` and Ayda considered no dated assertion. When the block is
+present, report `temporal.status` beside the answer:
 
 | Status | Say |
 | --- | --- |
@@ -64,10 +66,13 @@ beside the answer:
 | `uncertain`, `not_established`, `no_temporal_state` | The evidence does not fix when the value applies. |
 
 `temporal.coverage_status` other than `complete` means the answer may miss
-evidence: `incomplete` (Ayda hit its candidate limit), `partial`,
-`no_evidence`, or `limited` (the `known_at` instant is earlier than Ayda's
-stored history). Say so, and narrow the question by period or
-`folder_contains` when the gap matters.
+evidence. Say so beside the answer.
+
+- `incomplete` (Ayda hit its candidate limit) or `partial`: narrow the
+  question by period or `folder_contains` when the gap matters.
+- `no_evidence`, or `limited` (the `known_at` instant is earlier than Ayda's
+  stored history, or the evidence is gone): no narrower question helps;
+  report the limit.
 
 Each citation's `temporal_assertions` holds the states and decisions that
 record supports:
@@ -76,16 +81,23 @@ record supports:
   values. Cite both and name the disagreement; let the member pick.
 - `evidence_status` `source_changed`: the quoted source changed after Ayda
   verified the quote. Flag the quote as possibly stale.
-- `replaces_decision_id` and `superseded_by`: the assertion this one replaced,
-  and the one that replaced it. Follow them to order a change.
+- `replaces_decision_id` and `superseded_by` name, by `decision:` ID, the
+  decision this one replaced and the one that replaced it. No tool reads a
+  `decision:` ID. Find the assertion with that `assertion_id` on another
+  citation of the same `ask` result (Ayda adds the record of a replacing
+  decision as a citation), and read its `source_record_id` with
+  `get_record`.
 
-## Read a cut result
+## Read a cut day
 
-`today` and `timeline` return what fits in one result.
+A `today` result holds at most 16 KB and at most 200 records.
 
-- `truncated` or `size_limited` true means records are missing. Page
-  `timeline` with `next_cursor` over the same range for the rest, or state
-  the cut.
+- `size_limited` true: Ayda dropped the oldest records to fit the size.
+  `timeline` over the same `range_start` and `range_end` returns them,
+  newest first and without author, at 50 a page.
+- `truncated` true with `size_limited` false: the day holds more records
+  than `today` reads. A new `timeline` call returns the same newest records,
+  so state the cut instead.
 - `approximate_dates` counts the records whose time is when Ayda first read
   them, not when the event happened. When it is close to the number of
   records, present them as "seen that day", not as a sequence.

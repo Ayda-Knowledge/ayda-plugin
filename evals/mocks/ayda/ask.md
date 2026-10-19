@@ -26,12 +26,8 @@
       "started_at": "2026-09-22T09:12:00Z"
     }
   ],
-  "temporal": {
-    "status": "active",
-    "requested": false
-  },
   "latency_ms": 900,
-  "redaction_notice": "Ayda masks credentials and identity numbers it recognises before storage; a number it cannot verify is stored as written. Other sensitive content stays unchanged.",
+  "redaction_notice": "Ayda redacts each record once, for secrets and identity numbers, before storage; Google Drive files are stored as written.",
   "check": {
     "guarded": true,
     "claims_checked": 2,

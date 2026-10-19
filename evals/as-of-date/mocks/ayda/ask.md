@@ -13,9 +13,9 @@
     }
   ],
   "temporal": {
-    "evaluated_at": "{{input.effective_at}}",
     "status": "active",
-    "requested": true
+    "requested": true,
+    "effective_at": "{{input.effective_at}}"
   },
   "check": {
     "guarded": true,
