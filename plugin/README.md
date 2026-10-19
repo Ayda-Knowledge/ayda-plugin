@@ -19,7 +19,7 @@ fact.
   facts.
 - `ayda-onboarding`: writes a cited brief on a role, team or project.
 - `ayda-guide`: the rules the other skills use for cost, dates, conflicts
-  between sources, and citations.
+  between sources, Ayda's check of its own answer, and citations.
 
 ## Use it
 

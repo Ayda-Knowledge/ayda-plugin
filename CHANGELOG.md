@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.3.0 — 2026-10-19
+
+The skills now read the fields that Ayda core 1.3.0 and later sends, and
+leave the routing rules to Ayda's own tool descriptions. On an earlier core,
+`ayda-daily-brief` calls `whoami`, which that core does not have.
+
+- `ayda-guide` 1.1.0: a sentence that Ayda's answer check flags is verified
+  against its record or left out. It reads every temporal status, the
+  coverage of an answer, and the chain of replaced decisions. A long record
+  takes several `get_record` calls, and a cut day is read to the end.
+- `ayda-daily-brief` 1.1.0: the brief knows who you are (`whoami`). When the
+  day is too large for one result, it reads the rest with `timeline`, and it
+  tells you when the record times are only when Ayda first read them.
+- `ayda-decision-trace` 1.2.0: it follows the decision that replaced another,
+  and no longer asks the graph for decisions, which it does not hold.
+- `ayda-fact-check` 1.2.0: a flagged sentence in an Ayda answer is not
+  evidence for a verdict.
+- `ayda-loop-sweep` 1.1.0: one verdict covers the same loop raised in other
+  records.
+
 ## 1.2.2 — 2026-10-05
 
 - The plugin no longer declares the Ayda connector. The Claude apps cannot
