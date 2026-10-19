@@ -54,6 +54,8 @@ text = f"""# Eval results
 What the skills add on top of the Ayda connection alone. Both arms use the
 same cases, the same mocked Ayda server (`evals/mocks/`, with the server's real
 tool descriptions) and the same model. Produced by `scripts/eval-compare.sh`.
+The mock carries no server instructions, which a live Ayda adds, so the "Ayda
+alone" arm is a little weaker than a live connection.
 
 | Case | With skills | Ayda alone | Difference |
 | --- | --- | --- | --- |

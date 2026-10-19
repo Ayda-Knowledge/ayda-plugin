@@ -33,6 +33,8 @@ of their answers.
    `status`, the member's `note` when they gave one, and a `rationale` in
    their own words when they said why. Ayda quotes a rationale back the next
    time the same loop surfaces, so their words beat a paraphrase.
+   A verdict on a loop's `id` also covers its `duplicate_ids`, the same loop
+   raised in other records, so make one call per loop.
    `To-do not found.` means the loop is hidden or not theirs; report it and
    move on.
 5. **Repeat** steps 2–4 until the queue is empty or the member stops.
