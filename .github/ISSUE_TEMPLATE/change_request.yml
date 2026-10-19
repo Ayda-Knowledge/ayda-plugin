@@ -1,0 +1,45 @@
+name: Change request
+description: Ask for a change to a skill that exists, or to the mod.
+labels: [enhancement]
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Skill or mod
+      placeholder: ayda-daily-brief
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: The situation that needs to change. Describe the situation before the solution, with company data removed.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable results that show the work is done.
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: Scope exclusions
+      description: What this request leaves unchanged.
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Work, decisions or access this needs first.
+  - type: textarea
+    id: approach
+    attributes:
+      label: Suggested approach

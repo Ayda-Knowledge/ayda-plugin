@@ -3,7 +3,7 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.2.2-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.3.0-6A00E9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.
@@ -32,7 +32,7 @@ install steps below.
 | `ayda-decision-trace` | Shows how and why a decision was made, and how it changed, with citations. |
 | `ayda-fact-check` | Checks a plan, document or change against recorded company facts. |
 | `ayda-onboarding` | Writes a cited brief on a role, team or project, with a reading list. |
-| `ayda-guide` | Holds the rules the other skills use: call cost, dates, conflicts between sources, and citations. |
+| `ayda-guide` | Holds the rules the other skills use: call cost, dates, conflicts between sources, Ayda's check of its own answer, and citations. |
 
 Claude selects a skill when your request fits it. In Claude Code you can also
 start one by name, for example `/ayda:ayda-daily-brief`. Name Ayda when you
@@ -131,6 +131,10 @@ skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
 
 - [`plugin/`](plugin/) is the plugin itself: the manifest, icon and skills.
   It is what Claude installs and what the Claude directory reads.
+- [`mod/`](mod/) is a Claude Code mod that draws open loops and source cards.
+  It is not installed: [AGENTS.md](AGENTS.md#the-claude-code-mod) says why and
+  how to bring it back.
+- [`evals/`](evals/) holds the eval suite.
 - Everything else, such as `scripts/`, CI and this README, supports its
   development and is not installed.
 
@@ -142,3 +146,4 @@ Ideas for new skills and fixes are welcome. Read
 
 ## Licence
 
+[MIT](LICENSE) © 2026 Ubundi

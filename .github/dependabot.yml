@@ -1,0 +1,13 @@
+# Action pins only, as one grouped pull request a week into dev. The workflows
+# pin each Action by full SHA, so without this nothing proposes a newer pin.
+# target-branch: GitHub's default branch here is main, and work integrates on dev.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: dev
+    groups:
+      actions:
+        patterns: ["*"]

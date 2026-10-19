@@ -24,6 +24,12 @@ live in the Ayda product repository; this repository only instructs agents.
   result shape beats its documentation. Then give it an eval case under
   `evals/`, with fixtures from a fictional company: this repository is
   public, so no real record goes into a mock.
+- `evals/mocks/ayda/_tools.json` copies the tool names, descriptions and
+  input schemas of the live server, and each mock copies a live result
+  shape. Core owns both: the descriptions in `backend/app/mcp/guidance.py`
+  and `server.py`, the result shapes in `backend/app/mcp/tools.py` and
+  `backend/app/core/models/`. When they change, refresh the matching file,
+  then run the comparison again.
 - Grade behaviour, not skill invocation: `scripts/eval-compare.sh` scores the
   same cases without the skills, and only behaviour graders compare fairly.
 
@@ -50,9 +56,10 @@ actual evidence.
 
 ## Versions
 
-Bump a skill's `VERSION` when its behaviour changes, and the plugin
-`version` in `plugin/.claude-plugin/plugin.json` on every release. A new skill is
-added to `EXPECTED` in `scripts/check-skills.py`.
+Bump a skill's `VERSION` when its behaviour changes. A new skill is added to
+`EXPECTED` in `scripts/check-skills.py`. Before a promotion or a hotfix, read
+[CONTRIBUTING.md](CONTRIBUTING.md#release), "Release": it owns the rule for
+the plugin `version` and the `CHANGELOG.md` entry.
 
 ## Check
 

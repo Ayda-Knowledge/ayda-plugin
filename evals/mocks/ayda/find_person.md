@@ -2,7 +2,7 @@
   "query_id": "eval-person",
   "people": [
     {
-      "person_id": "person:bob-venter",
+      "id": "person:bob-venter",
       "name": "Bob Venter",
       "team": "Operations",
       "records": [
@@ -12,8 +12,8 @@
           "source": "slack",
           "channel": "#events",
           "author": "Thandi Mokoena",
-          "created_at": "2026-09-22T09:12:00Z",
-          "url": "https://example.invalid/slack/C0EVENTS/1790410000.100"
+          "url": "https://example.invalid/slack/C0EVENTS/1790410000.100",
+          "started_at": "2026-09-22T09:12:00Z"
         },
         {
           "id": "slack:C0EVENTS:1790590000.200",
@@ -21,11 +21,11 @@
           "source": "slack",
           "channel": "#events",
           "author": "Bob Venter",
-          "created_at": "2026-09-25T14:40:00Z",
-          "url": "https://example.invalid/slack/C0EVENTS/1790590000.200"
+          "url": "https://example.invalid/slack/C0EVENTS/1790590000.200",
+          "started_at": "2026-09-25T14:40:00Z"
         }
       ]
     }
   ],
-  "redaction_notice": "Ayda masks credentials and identity numbers it recognises before storage; a number it cannot verify is stored as written. Other sensitive content stays unchanged."
+  "redaction_notice": "Ayda redacts each record once, for secrets and identity numbers, before storage; Google Drive files are stored as written."
 }

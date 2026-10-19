@@ -1,7 +1,7 @@
 {
   "name": "ayda",
   "displayName": "Ayda",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Skills that make Claude use your company's own Ayda installation well, with cited company knowledge: daily briefs, open-loop triage, memories, decision traces, fact checks and onboarding briefs.",
   "author": {
     "name": "Ubundi"
