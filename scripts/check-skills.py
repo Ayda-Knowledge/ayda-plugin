@@ -17,6 +17,20 @@ EXPECTED = {
     "ayda-remember",
 }
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+# A plain YAML scalar cannot hold ": " or " #", nor start with an indicator.
+# Claude Code reads such a line, but the plugin directory's strict parser
+# does not, and holds the release for review.
+YAML_INDICATORS = tuple("-?:,[]{}#&*!|>'\"%@`")
+
+
+def plain_scalar_error(value: str) -> str | None:
+    if ": " in value or value.endswith(":"):
+        return "contains ': '"
+    if " #" in value:
+        return "contains ' #'"
+    if value.startswith(YAML_INDICATORS):
+        return f"starts with {value[0]!r}"
+    return None
 
 
 def frontmatter(text: str) -> dict[str, str]:
@@ -31,6 +45,9 @@ def frontmatter(text: str) -> dict[str, str]:
         key, separator, value = line.partition(":")
         if not separator or not value.strip():
             raise ValueError(f"invalid frontmatter line: {line!r}")
+        error = plain_scalar_error(value.strip())
+        if error:
+            raise ValueError(f"frontmatter {key.strip()} is not valid YAML: it {error}; rephrase it")
         fields[key.strip()] = value.strip()
     return fields
 

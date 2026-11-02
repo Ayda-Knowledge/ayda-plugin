@@ -1,6 +1,6 @@
 ---
 name: ayda-daily-brief
-description: Brief the member on their day from Ayda: what changed since they last worked, what they owe, what others owe them, and which loops look done. Use when the member starts their day, asks to catch up, or asks what they missed.
+description: Brief the member on their day from Ayda, with what changed since they last worked, what they owe, what others owe them, and which loops look done. Use when the member starts their day, asks to catch up, or asks what they missed.
 ---
 
 # Brief the member's day
