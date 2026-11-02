@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.1 — 2026-11-02
+
+- `ayda-daily-brief` 1.1.1: its description is now valid YAML. The colon in
+  "from Ayda: what changed" stopped the Claude directory from reading the
+  skill, so it held every update after 1.1.1 for review. Directory installs
+  now get the skills-only plugin, without the connector that did not work.
+- The plugin still declares no MCP server, hooks or commands. Connect your
+  own Ayda once, as the README says.
+
 ## 1.3.0 — 2026-10-19
 
 The skills now read the fields that Ayda core 1.3.0 and later sends, and
