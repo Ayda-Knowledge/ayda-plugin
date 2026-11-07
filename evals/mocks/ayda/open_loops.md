@@ -197,11 +197,13 @@
     }
   ],
   "done": [],
+  "dismissed": [],
   "counts": {
     "open": 5,
     "your_move": 3,
     "waiting": 3,
-    "done": 0
+    "done": 0,
+    "dismissed": 0
   },
   "filter": "all",
   "since": null,
