@@ -24,7 +24,8 @@ export type Loops = {
   your_move: Loop[]
   waiting: Loop[]
   done: Loop[]
-  counts: { open: number; your_move: number; waiting: number; done: number }
+  dismissed: Loop[]
+  counts: { open: number; your_move: number; waiting: number; done: number; dismissed: number }
 }
 
 // `busy` is true while a call for the list is in flight.
