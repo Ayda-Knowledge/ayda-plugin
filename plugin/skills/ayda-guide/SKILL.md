@@ -12,8 +12,9 @@ decide an answer, and whose word permits a write.
 
 ## Spend a budget
 
-A member gets 30 calls a minute across all tools, and each call has a
-60-second deadline. An `ask` or `search` result can run to tens of thousands
+A member has two budgets a minute: 240 calls to the reads `get_record`,
+`list_records`, `search`, `timeline` and `open_loops`, and 30 calls to all
+other tools together. Each call has a 120-second deadline. An `ask` or `search` result can run to tens of thousands
 of characters, and some hosts save a large result to a file.
 
 - From a saved `ask` result, read `answer`, `temporal`, `check`, and each
@@ -93,8 +94,8 @@ record supports:
 A `today` result holds at most 16 KB and at most 200 records.
 
 - `size_limited` true: Ayda dropped the oldest records to fit the size.
-  `timeline` over the same `range_start` and `range_end` returns them,
-  newest first and without author, at 50 a page.
+  `timeline` with `start` set to `range_start` and `end` set to
+  `range_end` returns them, newest first and without author, at 50 a page.
 - `truncated` true with `size_limited` false: the day holds more records
   than `today` reads. A new `timeline` call returns the same newest records,
   so state the cut instead.
