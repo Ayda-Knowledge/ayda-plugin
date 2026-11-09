@@ -3,7 +3,7 @@
 # Ayda for Claude
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.3.0-6A00E9)](CHANGELOG.md)
+[![Plugin version](https://img.shields.io/badge/plugin-1.3.1-6A00E9)](CHANGELOG.md#131--2026-11-02)
 [![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
 
 [Ayda](https://aydahq.com) is company memory that your company owns and runs.

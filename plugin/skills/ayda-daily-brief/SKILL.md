@@ -17,8 +17,8 @@ needs the member or explains something that does.
 2. **Read the day.** Call `today` with that date and zone. Each entry of
    `by_person` lists `record_ids`; read the title, author and link of each
    from `records`. When `size_limited` is true, Ayda dropped the day's
-   oldest records: call `timeline` from `range_start` to `range_end` with
-   `limit` 50, follow `next_cursor` for at most two more pages, and add the
+   oldest records: call `timeline` with `start` set to `range_start`, `end`
+   set to `range_end` and `limit` 50, follow `next_cursor` for at most two more pages, and add the
    records that `today` did not hold. When only `truncated` is true, the day
    holds more records than `today` reads; note the cut. Done when you hold
    the day's records and know whether any are still missing.
