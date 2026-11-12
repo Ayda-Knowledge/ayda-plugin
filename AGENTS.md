@@ -13,6 +13,10 @@ live in the Ayda product repository; this repository only instructs agents.
 - A skill caches what the Ayda tool descriptions leave out: cost, how tools
   combine, how to read results, and trust. Routing a question to a tool is
   the descriptions' job; a skill that repeats them drifts when they change.
+- Each rule has one home. `ayda-guide` holds a rule that two or more
+  skills need, and each of them points to it in its first paragraph. A
+  task skill holds only its own steps, and a completion criterion can
+  still demand what the guide defines ("each fact has a citation").
 - Every skill runs at any company, in any harness. It names the configured
   `ayda` MCP server and holds no installation URL, company value or
   credential.
@@ -59,7 +63,10 @@ actual evidence.
 ## Versions
 
 Bump a skill's `VERSION` when its behaviour changes. A new skill is added to
-`EXPECTED` in `scripts/check-skills.py`. Before a promotion or a hotfix, read
+`EXPECTED` in `scripts/check-skills.py`. The same check needs an eval case
+that carries the skill's name as a tag, and every backticked name in a
+skill to be in the tool list, a mock, or `scripts/skill-vocabulary.txt`.
+Before a promotion or a hotfix, read
 [CONTRIBUTING.md](CONTRIBUTING.md#release), "Release": it owns the rule for
 the plugin `version` and the `CHANGELOG.md` entry.
 

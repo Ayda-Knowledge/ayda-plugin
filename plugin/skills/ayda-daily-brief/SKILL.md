@@ -17,9 +17,9 @@ needs the member or explains something that does.
 2. **Read the day.** Call `today` with that date and zone. Each entry of
    `by_person` lists `record_ids`; read the title, author and link of each
    from `records`. While `next_cursor` is present, call `today` again with
-   `cursor` set to it, for at most three more pages. Done when
-   `next_cursor` is absent, or you hold four pages and have noted that the
-   day is cut.
+   `cursor` set to it, for at most three more pages; a later page holds
+   records only, so take `loops` from the first. Done when `next_cursor` is
+   absent, or you hold four pages and have noted that the day is cut.
 3. **Read the loops.** Call `open_loops` with `filter` `all`. While
    `next_cursor` is present, call again with it and the same `filter`, for
    at most two more pages. A loop that has `status` `looks_done`, or an

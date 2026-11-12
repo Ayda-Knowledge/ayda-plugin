@@ -6,8 +6,8 @@ description: Reconstruct a company decision from cited Ayda evidence. Use when a
 # Trace a decision with Ayda
 
 Use the configured `ayda` MCP server, and the `ayda-guide` skill for the
-time fields and the answer check. The trace is a chronology: each event has
-a date, a source, and a place in the order.
+time fields, the answer check and how to cite. The trace is a
+chronology: each event has a date, a source, and a place in the order.
 
 1. **Find the decision.** Open with one `ask` for the current decision and
    its stated reason, with `response_mode` `detail`: a compact answer
@@ -38,8 +38,7 @@ a date, a source, and a place in the order.
    revision. Give each disagreement between people or sources as the
    records state it. Name any `authority_conflict` the citations carry,
    and verify or leave out each sentence that `ask` put in
-   `check.flagged`. Cite each statement with its Ayda record ID or
-   returned source link, and mark each inference as inference.
+   `check.flagged`. Mark each inference as inference.
 
 The trace is done when every statement has a citation or is marked as
 inference, and it states each gap: an event that no visible record covers,

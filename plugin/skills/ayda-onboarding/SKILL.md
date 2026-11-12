@@ -6,8 +6,9 @@ description: Build a bounded role or project onboarding brief from cited Ayda ev
 # Build an onboarding brief with Ayda
 
 Use the configured `ayda` MCP server, and the `ayda-guide` skill for call
-cost. The brief covers one scope: one role, team or project, over one
-period. Ask for the scope or the period when the request gives neither.
+cost and how to cite. The brief covers one scope: one role, team or
+project, over one period. Ask for the scope or the period when the
+request gives neither.
 
 1. **Open the scope.** Call `research_brief` once on the scope. When the
    project has its own folder, pass `folder_contains` to every later call.
@@ -28,9 +29,8 @@ period. Ask for the scope or the period when the request gives neither.
    and a reading list of at most seven records.
 5. **Write the brief**, compact, with these parts: purpose, current state,
    key decisions, people, unresolved work, reading list. Cite each
-   material statement with its Ayda record ID or returned source link. Put
-   each open question and each disagreement under unresolved work, as the
-   records state it.
+   material statement. Put each open question and each disagreement under
+   unresolved work, as the records state it.
 
 The brief is done when it stays inside the scope, each material fact has a
 citation, and each unresolved question stands apart from the confirmed

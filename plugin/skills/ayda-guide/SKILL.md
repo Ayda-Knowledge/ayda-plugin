@@ -104,8 +104,6 @@ records. Their descriptions say how `next_cursor` continues a page.
 
 - Count each page against the budget. When you stop while `next_cursor` is
   still present, state the cut.
-- A later `today` page holds records only. Take `loops` from the first
-  page.
 - `approximate_dates` counts the records that share one minute with four or
   more others, out of `approximate_dates_records`. That is the mark of a
   bulk import, so those times prove no order. When most records are
@@ -116,6 +114,9 @@ records. Their descriptions say how `next_cursor` continues a page.
 - Cite every material statement with the record's title and link, or its
   canonical ID.
 - Keep what the records state apart from what you infer from them.
+- Report an empty or refused result as "no visible evidence". It marks
+  the limit of what this member can read, and proves nothing about what
+  exists.
 
 ## Writes take the member's word
 
