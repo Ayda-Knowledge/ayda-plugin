@@ -21,6 +21,14 @@ SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 # Claude Code reads such a line, but the plugin directory's strict parser
 # does not, and holds the release for review.
 YAML_INDICATORS = tuple("-?:,[]{}#&*!|>'\"%@`")
+ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "evals" / "mocks" / "ayda" / "_tools.json"
+REVIEWED = Path(__file__).resolve().parent / "skill-vocabulary.txt"
+# A skill names tools, arguments and result fields in backticks. Core owns
+# those names; the tool list and the mocks are this repository's copies.
+CODE = re.compile(r"`([^`\n]+)`")
+WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+TAGS = re.compile(r"^tags:\s*\[([^\]]*)\]\s*$", re.MULTILINE)
 
 
 def plain_scalar_error(value: str) -> str | None:
@@ -52,7 +60,46 @@ def frontmatter(text: str) -> dict[str, str]:
     return fields
 
 
-def validate(package: Path) -> list[str]:
+def contract_names() -> tuple[set[str], set[str]]:
+    """The words the contract copies hold, and the reviewed names."""
+    words = set(EXPECTED) | {"ayda"}
+    words.update(WORD.findall(TOOLS.read_text(encoding="utf-8")))
+    for mock in (ROOT / "evals").glob("**/mocks/ayda/*.md"):
+        words.update(WORD.findall(mock.read_text(encoding="utf-8")))
+    reviewed = set()
+    for line in REVIEWED.read_text(encoding="utf-8").splitlines():
+        if line.strip() and not line.startswith("#"):
+            reviewed.add(line.split(" # ", 1)[0].strip())
+    return words, reviewed
+
+
+def unknown_names(body: str, words: set[str], reviewed: set[str]) -> list[str]:
+    """Backticked names that no contract copy and no reviewed line holds.
+
+    `check.flagged` passes when each part is known, and `project:` when
+    `project` is."""
+    unknown = []
+    for name in sorted(set(CODE.findall(body))):
+        if name in reviewed or name in words:
+            continue
+        parts = [part for part in name.rstrip(":").split(".") if part]
+        if parts and all(part in words or part in reviewed for part in parts):
+            continue
+        unknown.append(name)
+    return unknown
+
+
+def eval_tags() -> set[str]:
+    """Every tag that an eval case carries."""
+    tags: set[str] = set()
+    for prompt in (ROOT / "evals").glob("*/prompt.md"):
+        match = TAGS.search(prompt.read_text(encoding="utf-8"))
+        if match:
+            tags.update(tag.strip() for tag in match.group(1).split(","))
+    return tags
+
+
+def validate(package: Path, words: set[str], reviewed: set[str]) -> list[str]:
     errors: list[str] = []
     skill = package / "SKILL.md"
     version = package / "VERSION"
@@ -78,17 +125,30 @@ def validate(package: Path) -> list[str]:
             errors.append(f"must not contain installation or credential value: {value!r}")
     if "configured `ayda` mcp server" not in text:
         errors.append("must use the configured ayda MCP server")
+    body = skill.read_text(encoding="utf-8").split("---\n", 2)[-1]
+    for name in unknown_names(body, words, reviewed):
+        errors.append(
+            f"names `{name}`, which no tool, mock or scripts/skill-vocabulary.txt line holds"
+        )
     return errors
 
 
 def main() -> int:
-    root = Path(__file__).resolve().parents[1] / "plugin" / "skills"
+    root = ROOT / "plugin" / "skills"
     found = {path.name for path in root.iterdir() if path.is_dir()}
     failures: list[str] = []
     if found != EXPECTED:
         failures.append(f"skills/ contains {sorted(found)}, expected {sorted(EXPECTED)}")
+    for needed in (TOOLS, REVIEWED):
+        if not needed.is_file():
+            print(f"missing {needed.relative_to(ROOT)}: the contract check needs it", file=sys.stderr)
+            return 1
+    words, reviewed = contract_names()
+    tags = eval_tags()
     for name in sorted(EXPECTED & found):
-        failures.extend(f"{name}: {error}" for error in validate(root / name))
+        failures.extend(f"{name}: {error}" for error in validate(root / name, words, reviewed))
+        if name not in tags:
+            failures.append(f"{name}: no eval case under evals/ has the tag {name!r}")
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1

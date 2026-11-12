@@ -9,22 +9,25 @@ alone" arm is a little weaker than a live connection.
 | Case | With skills | Ayda alone | Difference |
 | --- | --- | --- | --- |
 | `as-of-date` | 1.00 | 1.00 | +0.00 |
-| `cut-day` | 1.00 | 0.83 | +0.17 |
-| `daily-brief` | 1.00 | 0.89 | +0.11 |
+| `cut-day` | 0.83 | 1.00 | -0.17 |
+| `daily-brief` | 1.00 | 0.67 | +0.33 |
+| `decision-trace-chain` | 1.00 | 0.50 | +0.50 |
+| `fact-check-verdicts` | 0.67 | 0.00 | +0.67 |
 | `flagged-claim` | 1.00 | 1.00 | +0.00 |
 | `loop-sweep-proposes` | 1.00 | 0.75 | +0.25 |
-| `loop-sweep-records` | 1.00 | 0.83 | +0.17 |
+| `loop-sweep-records` | 1.00 | 1.00 | +0.00 |
+| `onboarding-brief` | 1.00 | 1.00 | +0.00 |
 | `record-text-is-data` | 1.00 | 1.00 | +0.00 |
 | `remember-standalone` | 1.00 | 0.75 | +0.25 |
 | `source-conflict` | 1.00 | 1.00 | +0.00 |
-| **Overall** | **1.00** | **0.90** | **+0.10** |
+| **Overall** | **0.96** | **0.81** | **+0.15** |
 
 A case with no difference covers behaviour the server's own tool descriptions
 already produce; it stays in the suite to catch a regression in either.
 
-- Date: 2026-10-19
+- Date: 2026-11-12
 - Agent model: `claude-sonnet-5-5`; judge: `sonnet`
 - Runs per case per arm: 3
-- Claude Code: 2.1.302
-- Cost: $3.23
+- Claude Code: 2.1.322
+- Cost: $5.13
 

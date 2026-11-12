@@ -62,21 +62,42 @@ function readAnswer(output: unknown): Answer | null {
 // Claude Code hands a mod one text block for an MCP result and no
 // `structuredContent`. That block is either the structured result as JSON or
 // the text the server writes for a person, so the mod reads both.
-const GROUPS = { 'Your move': 'your_move', 'Awaiting others': 'waiting', Done: 'done' } as const
+const GROUPS = {
+  'Your move': 'your_move',
+  'Awaiting others': 'waiting',
+  Done: 'done',
+  Dismissed: 'dismissed',
+} as const
 
 function parseLoops(text: string): Loops | null {
-  const counts = /^(\d+) open · (\d+) your move · (\d+) awaiting others · (\d+) done/.exec(text)
+  // An older Ayda sends no dismissed count: its done group still holds them.
+  const counts = /^(\d+) open · (\d+) your move · (\d+) awaiting others · (\d+) done(?: · (\d+) dismissed)?/.exec(text)
   if (counts === null) return null
 
-  const [open, yourMove, waiting, done] = counts.slice(1).map(Number) as [number, number, number, number]
-  const loops: Loops = { your_move: [], waiting: [], done: [], counts: { open, your_move: yourMove, waiting, done } }
+  const [open, yourMove, waiting, done, dismissed] = counts.slice(1).map(value => Number(value ?? 0)) as [
+    number,
+    number,
+    number,
+    number,
+    number,
+  ]
+  const loops: Loops = {
+    your_move: [],
+    waiting: [],
+    done: [],
+    dismissed: [],
+    counts: { open, your_move: yourMove, waiting, done, dismissed },
+  }
   let group: Loop[] | null = null
   let held: string | null = null
 
   for (const line of text.split('\n')) {
-    const heading = /^(Your move|Awaiting others|Done) \(\d+\)$/.exec(line)?.[1] as keyof typeof GROUPS | undefined
-    if (heading) {
-      group = loops[GROUPS[heading]]
+    const heading = /^(.+) \(\d+\)$/.exec(line)?.[1]
+    if (heading !== undefined && !line.startsWith('- ') && !line.startsWith('  ')) {
+      // A heading the mod does not know starts a group it does not hold, so
+      // its rows never land in the group above it.
+      group = heading in GROUPS ? loops[GROUPS[heading as keyof typeof GROUPS]] : null
+      held = null
     } else if (line.startsWith('- ')) {
       held = line.slice(2)
     } else if (line.startsWith('  id: ') && group !== null && held !== null) {
@@ -168,7 +189,8 @@ function readLoops(text: string): Loops | null {
     your_move: group(value.your_move),
     waiting: group(value.waiting),
     done: group(value.done),
-    counts: value.counts as Loops['counts'],
+    dismissed: group(value.dismissed),
+    counts: { dismissed: 0, ...(value.counts as Omit<Loops['counts'], 'dismissed'>) },
   }
 }
 
@@ -233,6 +255,7 @@ async function decide($: EngineInterface, loop: Loop, status: 'open' | 'done' | 
             your_move: without(held.loops.your_move),
             waiting: without(held.loops.waiting),
             done: without(held.loops.done),
+            dismissed: without(held.loops.dismissed),
           },
         },
   )
@@ -318,6 +341,9 @@ export const register: Register = on => {
     // The member's own day, as YYYY-MM-DD: a due date before it is overdue.
     const today = new Date().toLocaleDateString('en-CA')
 
+    // A closed group shows Reopen, not the verdicts of an open loop.
+    const closed = (name: string) => name === 'done' || name === 'dismissed'
+
     const group = (name: string, title: string, list: Loop[], total: number) => (
       <Box flexDirection="column" marginTop={1}>
         <Text bold>
@@ -334,7 +360,7 @@ export const register: Register = on => {
               <Text dimColor>
                 {loop.due === undefined ? (
                   ''
-                ) : name !== 'done' && loop.due < today ? (
+                ) : !closed(name) && loop.due < today ? (
                   <Text color={WARNING}>overdue {loop.due}</Text>
                 ) : (
                   `due ${loop.due}`
@@ -353,10 +379,10 @@ export const register: Register = on => {
                   “{loop.evidence}”
                 </Text>
               )}
-              {loop.looksDone && name !== 'done' && (
+              {loop.looksDone && !closed(name) && (
                 <Text color={WARNING}>Looks done: {loop.reason ?? 'Ayda found a later record that closes it.'}</Text>
               )}
-              {name === 'done' ? (
+              {closed(name) ? (
                 <Box>{verdict(`${name}-${index}-open`, 'Reopen', loop, 'open')}</Box>
               ) : (
                 <Box columnGap={1}>
@@ -376,7 +402,7 @@ export const register: Register = on => {
       <Box flexDirection="column">
         <Box columnGap={1}>
           <Text dimColor>
-            {loops.counts.open} open · {loops.counts.done} done
+            {loops.counts.open} open · {loops.counts.done} done · {loops.counts.dismissed} dismissed
           </Text>
           {busy ? (
             <Text dimColor>Asking Ayda…</Text>
@@ -388,6 +414,7 @@ export const register: Register = on => {
         {group('move', 'Your move', loops.your_move, loops.counts.your_move)}
         {group('waiting', 'Awaiting others', loops.waiting, loops.counts.waiting)}
         {group('done', 'Done', loops.done, loops.counts.done)}
+        {group('dismissed', 'Dismissed', loops.dismissed, loops.counts.dismissed)}
         {held < loops.counts.open && (
           <Box marginTop={1}>
             <Text dimColor>For the other loops, ask Claude to sweep your open loops.</Text>

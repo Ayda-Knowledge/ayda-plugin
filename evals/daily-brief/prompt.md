@@ -1,6 +1,6 @@
 ---
 description: Morning catch-up reads the member's day in their own zone and triages loops
-tags: [daily]
+tags: [daily, ayda-daily-brief]
 max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill]

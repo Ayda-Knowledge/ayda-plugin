@@ -17,6 +17,7 @@ expect:
       "channel": "#sales",
       "author": "Liesel Bester",
       "occurred_at": "2026-09-28T13:30:00Z",
+      "timestamp_basis": "record_metadata",
       "url": "https://example.invalid/slack/C0SALES/1790670000.300"
     },
     {
@@ -25,6 +26,7 @@ expect:
       "source": "github",
       "author": "Sipho Dlamini",
       "occurred_at": "2026-09-28T10:02:00Z",
+      "timestamp_basis": "record_metadata",
       "url": "https://example.invalid/github/harbour/site/pr/41",
       "channel": null
     },
@@ -35,6 +37,7 @@ expect:
       "channel": "#events",
       "author": "Bob Venter",
       "occurred_at": "2026-09-25T14:40:00Z",
+      "timestamp_basis": "record_metadata",
       "url": "https://example.invalid/slack/C0EVENTS/1790590000.200"
     }
   ],
@@ -72,5 +75,8 @@ expect:
   "truncated": false,
   "size_limited": false,
   "approximate_dates": 0,
+  "approximate_dates_scope": "returned_page",
+  "approximate_dates_records": 3,
+  "approximate_dates_method": "five_or_more_records_in_one_minute; not proof of ingest time",
   "redaction_notice": "Ayda redacts each record once, for secrets and identity numbers, before storage; Google Drive files are stored as written."
 }

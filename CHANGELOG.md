@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.4.0 — 2026-11-12
+
+The skills now read results as Ayda core 2.6.1 sends them. Install this
+release with a core at 2.6.1 or later.
+
+- `ayda-daily-brief` 1.2.1 and `ayda-loop-sweep` 1.2.0: a cut `today` or
+  `open_loops` result is read to its next page with `next_cursor`, up to a
+  stated page limit, and the brief or sweep says what a remaining cut hides.
+  Before, the daily brief missed records that one more call returns.
+- `ayda-guide` 1.3.0: it explains a cut result, the `approximate_dates`
+  count, and the compact `ask` answer, which leaves out most
+  `temporal_assertions`. It also holds the rules to cite every statement and
+  to report an empty result as "no visible evidence".
+- `ayda-decision-trace` 1.4.1: it asks for the detail answer, so it can
+  follow a replaced decision to its record. Each step ends on a stated
+  completion criterion.
+- `ayda-fact-check` 1.3.1: each step ends on a stated completion criterion.
+- `ayda-onboarding` 1.3.0: each step ends on a stated completion criterion,
+  and the brief looks up each named person before it states a role.
+
 ## 1.3.1 — 2026-11-02
 
 - `ayda-daily-brief` 1.1.1: its description is now valid YAML. The colon in
