@@ -75,6 +75,14 @@ evidence. Say so beside the answer.
   stored history, or the evidence is gone): no narrower question helps;
   report the limit.
 
+`ask` and `research_brief` answer in `response_mode` `compact` unless the
+call passes `detail`. A compact answer keeps a citation's
+`temporal_assertions` only for a conflict or an item Ayda marks for review.
+For each other citation it leaves a count in `assertions_left_out` and
+names `temporal_assertions` in `detail_omitted`. When the task needs a
+decision's history or the age of a quote, make the call with
+`response_mode` `detail`.
+
 Each citation's `temporal_assertions` holds the states and decisions that
 record supports:
 
@@ -89,25 +97,26 @@ record supports:
   decision as a citation), and read its `source_record_id` with
   `get_record`.
 
-## Read a cut day
+## Read a cut result
 
-A `today` result holds at most 16 KB and at most 200 records.
+`today` and `open_loops` send at most 16 KB a page, and `today` at most 200
+records. Their descriptions say how `next_cursor` continues a page.
 
-- `size_limited` true: Ayda dropped the oldest records to fit the size.
-  `timeline` with `start` set to `range_start` and `end` set to
-  `range_end` returns them, newest first and without author, at 50 a page.
-- `truncated` true with `size_limited` false: the day holds more records
-  than `today` reads. A new `timeline` call returns the same newest records,
-  so state the cut instead.
-- `approximate_dates` counts the records whose time is when Ayda first read
-  them, not when the event happened. When it is close to the number of
-  records, present them as "seen that day", not as a sequence.
+- Count each page against the budget. When you stop while `next_cursor` is
+  still present, state the cut.
+- `approximate_dates` counts the records that share one minute with four or
+  more others, out of `approximate_dates_records`. That is the mark of a
+  bulk import, so those times prove no order. When most records are
+  counted, present them as "dated that day", not as a sequence.
 
 ## Answer with the evidence
 
 - Cite every material statement with the record's title and link, or its
   canonical ID.
 - Keep what the records state apart from what you infer from them.
+- Report an empty or refused result as "no visible evidence". It marks
+  the limit of what this member can read, and proves nothing about what
+  exists.
 
 ## Writes take the member's word
 

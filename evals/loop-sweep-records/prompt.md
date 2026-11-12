@@ -1,6 +1,6 @@
 ---
 description: A verdict the member states is recorded once, with their reason
-tags: [daily]
+tags: [daily, ayda-loop-sweep]
 max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill]

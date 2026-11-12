@@ -1,0 +1,19 @@
+# Names that a skill puts in backticks and that neither a tool description
+# in evals/mocks/ayda/_tools.json nor a mock holds. scripts/check-skills.py
+# reads this file. One name per line, then " # " and where core defines it.
+# Add a name only after you find it in core's source.
+scheduled # temporal.status; backend/app/core/graph/temporal.py
+ended_unknown # temporal.status; backend/app/core/graph/temporal.py
+uncertain # temporal.status; backend/app/core/graph/temporal.py
+not_yet_effective # temporal.status; backend/app/core/models/search.py
+not_established # temporal.status; backend/app/core/models/search.py
+no_temporal_state # temporal.status; backend/app/core/models/search.py
+incomplete # temporal.coverage_status; backend/app/core/models/search.py
+partial # temporal.coverage_status; backend/app/core/models/search.py
+no_evidence # temporal.coverage_status; backend/app/core/models/search.py
+limited # temporal.coverage_status; backend/app/core/models/search.py
+source_changed # evidence_status; backend/app/core/models/source.py
+invalid citation # check.flagged reason; backend/app/core/models/search.py
+To-do not found. # decide_open_loop error; backend/app/core/query/open_loops.py
+assertions_left_out # compact answer; backend/app/mcp/tools.py
+detail_omitted # compact answer; backend/app/mcp/tools.py

@@ -1,6 +1,6 @@
 ---
 description: A named memory is stored once, as a sentence that stands alone
-tags: [daily]
+tags: [daily, ayda-remember]
 max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill]

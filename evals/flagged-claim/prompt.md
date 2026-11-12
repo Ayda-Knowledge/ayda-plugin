@@ -1,6 +1,6 @@
 ---
 description: A sentence that Ayda's answer check flags is verified or left out, not passed on as fact
-tags: [guide]
+tags: [guide, ayda-guide]
 max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill]
