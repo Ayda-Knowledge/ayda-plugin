@@ -19,8 +19,9 @@ request gives neither.
    not found.
 3. **Name the people.** Call `find_person` for each collaborator or role
    holder that the evidence names, at most five. Give a person only the
-   role or responsibility that a record states. Done when each person has
-   a stated role with its record, or is listed by name only.
+   role or responsibility that a record states. Done when each of those
+   people has had a `find_person` call, and has a role, team or duty with
+   the record that states it, or a note that the records state none.
 4. **Fix the current state.** When current milestones matter, call
    `timeline` for the last two weeks of the period. Read with `get_record`
    the records, at most three, that a newcomer must read first. Build the
