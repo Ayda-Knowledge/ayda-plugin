@@ -10,13 +10,15 @@ verdict you record is the member's own word, so the sweep moves at the pace
 of their answers.
 
 1. **Load the queue.** Call `open_loops` with `filter` `all` and `limit` 50,
-   plus `since` when the member names a start date. A loop looks done when
-   its `status` is `looks_done` or it carries an `ayda_confident` claim. One
-   ID can sit in two groups; queue it once. Order the queue: loops that look
-   done first, then `your_move` by due date and age, then `waiting` loops
-   older than a week. Leave `done` loops out. Done when the
-   queue is ordered and you have stated the `counts`, and any cut that
-   `truncated` or `size_limited` reports.
+   plus `since` when the member names a start date. While `next_cursor` is
+   present, call again with it and the same `filter` and `since`, for at
+   most four more pages. A loop looks done when its `status` is
+   `looks_done` or it carries an `ayda_confident` claim. One ID can sit in
+   two groups; queue it once. Order the queue: loops that look done first,
+   then `your_move` by due date and age, then `waiting` loops older than a
+   week. Leave `done` loops out. Done when the queue is ordered and you
+   have stated the `counts`, and how many loops the queue does not hold
+   when `next_cursor` is still present.
 2. **Prepare a batch of up to five.** For each loop give the ask, the
    counterpart, the record that raised it, the due date, and a proposal:
    - Looks done: read the record in the loop's `resolution` or

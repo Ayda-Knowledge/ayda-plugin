@@ -9,10 +9,12 @@ Use the configured `ayda` MCP server, and the `ayda-guide` skill for the
 time fields and the answer check. The signed-in member's access controls
 the evidence. An empty result does not prove that no other evidence exists.
 
-1. Open with one `ask` for the current decision and its stated reason; its
-   citations seed the trace. When the question is how the decision changed,
-   ask again with `effective_at` set before the change and compare. A
-   citation's `temporal_assertions` can name the decision it replaced
+1. Open with one `ask` for the current decision and its stated reason, with
+   `response_mode` `detail`: a compact answer leaves out the
+   `temporal_assertions` that name a replaced decision. Its citations seed
+   the trace. When the question is how the decision changed, ask again
+   with `effective_at` set before the change and compare. A citation's
+   `temporal_assertions` can name the decision it replaced
    (`replaces_decision_id`) and the one that replaced it (`superseded_by`):
    follow that chain as `ayda-guide` says before you search. Done when you
    hold the current decision, its citations, and each earlier version the

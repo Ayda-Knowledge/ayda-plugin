@@ -16,28 +16,28 @@ needs the member or explains something that does.
    it. Done when you hold the member's name or email, one date and one zone.
 2. **Read the day.** Call `today` with that date and zone. Each entry of
    `by_person` lists `record_ids`; read the title, author and link of each
-   from `records`. When `size_limited` is true, Ayda dropped the day's
-   oldest records: call `timeline` with `start` set to `range_start`, `end`
-   set to `range_end` and `limit` 50, follow `next_cursor` for at most two more pages, and add the
-   records that `today` did not hold. When only `truncated` is true, the day
-   holds more records than `today` reads; note the cut. Done when you hold
-   the day's records and know whether any are still missing.
-3. **Read the loops.** Call `open_loops` with `filter` `all`. A loop that
-   has `status` `looks_done`, or an `ayda_confident` claim, looks done. One
-   ID can sit in two groups; list it once, under `your_move`. Done when you
-   hold `your_move`, `waiting`, the loops that look done, and `counts`.
+   from `records`. While `next_cursor` is present, call `today` again with
+   `cursor` set to it, for at most three more pages. Done when
+   `next_cursor` is absent, or you hold four pages and have noted that the
+   day is cut.
+3. **Read the loops.** Call `open_loops` with `filter` `all`. While
+   `next_cursor` is present, call again with it and the same `filter`, for
+   at most two more pages. A loop that has `status` `looks_done`, or an
+   `ayda_confident` claim, looks done. One ID can sit in two groups; list
+   it once, under `your_move`. Done when you hold `your_move`, `waiting`,
+   the loops that look done, and `counts`, and know whether a group is
+   still cut.
 4. **Read the agenda.** When the host has a calendar tool, read today's
    meetings from it. Otherwise call `ask` once: "Which meetings are scheduled
    for <today's date>, and who attends?". Skip this step when neither returns
    anything useful.
 5. **Choose what matters.** Keep a record from step 2 when the member wrote
    it or its title names them, when it touches a loop from step 3, or when
-   it belongs to a project an agenda meeting covers. A `timeline` record has
-   no author, so judge it by its title. Call `get_record` or `ask` for at
-   most three kept records whose meaning the title does not carry.
-   `by_person` groups by the author text each source sent, so one person
-   can appear twice; merge them only when the name makes it plain. Done
-   when each record is kept or dropped.
+   it belongs to a project an agenda meeting covers. Call `get_record` or
+   `ask` for at most three kept records whose meaning the title does not
+   carry. `by_person` groups by the author text each source sent, so one
+   person can appear twice; merge them only when the name makes it plain.
+   Done when each record is kept or dropped.
 6. **Write the brief** in this order, one line per item, each cited with its
    record title and link or ID:
    - **Needs you**: `your_move` loops, overdue first, then by due date.
@@ -48,9 +48,10 @@ needs the member or explains something that does.
    - **Today**: the meetings from step 4.
 
    State the loop counts the tool returned, and say when the day or a loop
-   group is still cut. When `approximate_dates` is close to the number of
-   records, say that their times are when Ayda read them, and order **What
-   changed** by project, not by time. Close by offering to record verdicts
+   group is still cut. When `approximate_dates` is close to
+   `approximate_dates_records`, say that the record times can come from a
+   bulk import, and order **What changed** by project, not by time. Close
+   by offering to record verdicts
    on the loops (the `ayda-loop-sweep` skill does this).
 
 The brief is done when every `your_move` loop and every loop that looks done
