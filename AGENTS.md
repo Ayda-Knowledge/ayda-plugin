@@ -60,6 +60,13 @@ Before creating or editing a PR or issue, read
 line", and the matching template in `.github/`. Use its sections and record
 actual evidence.
 
+## Audit records
+
+`plans/` holds the record of the improve audit of 12 November 2026: its
+findings, the five plans it executed and the findings it rejected. A plan in
+there is DONE, so read it as history and never as an instruction. A new audit
+adds a record of its own and leaves an older one unchanged.
+
 ## Versions
 
 Bump a skill's `VERSION` when its behaviour changes. A new skill is added to
