@@ -142,7 +142,10 @@ function short(title: string): string {
 // that the pane shows.
 type RawLoop = {
   id: string
-  summary: string
+  // Core 2.7 sends what a model or the member wrote as `extracted`: one JSON
+  // object between one pair of data markers. An older core sends the fields.
+  extracted?: string
+  summary?: string
   direction?: string
   status?: string
   counterpart_name?: string | null
@@ -154,8 +157,25 @@ type RawLoop = {
   resolution?: { summary?: string | null } | null
 }
 
+const FENCED = /^<<<company data ([0-9a-f]{8}): [^\n]*>>>\n([\s\S]*)\n<<<end company data \1>>>$/
+
+// The fields of `extracted`, without the data markers; empty when it is absent
+// or not a fenced JSON object.
+function extractedFields(raw: RawLoop): Record<string, string> {
+  if (typeof raw.extracted !== 'string') return {}
+  try {
+    const value: unknown = JSON.parse(FENCED.exec(raw.extracted)?.[2] ?? raw.extracted)
+    if (!isObject(value)) return {}
+
+    return Object.fromEntries(Object.entries(value).filter(([, field]) => typeof field === 'string')) as Record<string, string>
+  } catch {
+    return {}
+  }
+}
+
 function toLoop(raw: RawLoop): Loop {
-  const who = raw.counterpart_name
+  const fields = extractedFields(raw)
+  const who = fields.counterpart_name ?? raw.counterpart_name
   const parts = [
     who ? (raw.direction === 'await' ? `waiting on ${who}` : `for ${who}`) : '',
     raw.raised ? (raw.raised.channel ?? raw.raised.source) : '',
@@ -164,13 +184,13 @@ function toLoop(raw: RawLoop): Loop {
 
   return {
     id: raw.id,
-    title: raw.summary,
+    title: fields.summary ?? raw.summary ?? '',
     meta: parts.filter(Boolean).join(' · '),
     due: day(raw.due_at) || undefined,
     raised: raw.raised ? { title: short(raw.raised.title), url: linkable(raw.raised.url) } : undefined,
     looksDone: raw.status === 'looks_done',
     evidence: raw.evidence ?? undefined,
-    reason: raw.ayda_confident?.summary ?? raw.resolution?.summary ?? undefined,
+    reason: fields.reason ?? raw.ayda_confident?.summary ?? raw.resolution?.summary ?? undefined,
   }
 }
 
