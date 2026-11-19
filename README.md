@@ -1,43 +1,57 @@
 ![Ayda for Claude: your company's own knowledge, with a citation on every answer](assets/social-preview.png)
 
-# Ayda for Claude
+<div align="center">
+  <h1>Ayda for Claude</h1>
 
-[![Licence: MIT](https://img.shields.io/badge/licence-MIT-6A00E9)](LICENSE)
-[![Plugin version](https://img.shields.io/badge/plugin-1.3.1-6A00E9)](CHANGELOG.md#131--2026-11-02)
-[![Skills](https://img.shields.io/badge/skills-7-2AB7FF)](#skills)
+  <p><strong>Connect Claude and MCP agents to your company's Ayda for cited answers, daily briefs, and open loops.</strong></p>
 
-[Ayda](https://aydahq.com) is company memory that your company owns and runs.
-It reads the sources your company connects, such as Slack, Google Drive,
-Gmail and GitHub, and answers with a citation for each statement.
+  <p>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-6A00E9" alt="Licence: MIT" /></a>
+    <a href="CHANGELOG.md#140--2026-11-12"><img src="https://img.shields.io/badge/plugin-1.4.0-6A00E9" alt="Plugin version: 1.4.0" /></a>
+    <a href="#skills"><img src="https://img.shields.io/badge/skills-7-2AB7FF" alt="Skills: 7" /></a>
+  </p>
 
-This plugin adds skills that make Claude use your company's own Ayda
-installation well: fewer calls, a citation on each statement, and the correct
-date for each fact. You connect Claude to your installation once, in the
-install steps below.
+  <p>
+    <a href="#skills">Skills</a> ·
+    <a href="#try-it">Try it</a> ·
+    <a href="#how-it-works">How it works</a> ·
+    <a href="#install">Install</a> ·
+    <a href="#data-and-privacy">Privacy</a> ·
+    <a href="#evals">Evals</a>
+  </p>
+</div>
+
+[Ayda](https://aydahq.com) is company memory that your company owns and runs. It
+reads the sources your company connects—such as Slack, Google Drive, Gmail, and
+GitHub—and answers with a citation for every statement.
+
+This plugin adds seven skills that make Claude use your company's Ayda
+installation well: fewer tool calls, a citation on every statement, and the
+right date for every fact.
 
 ## Skills
 
-**Every day**
+### Daily workflows
 
 | Skill | What it does |
 | --- | --- |
-| `ayda-daily-brief` | Starts your day: what changed, what you owe, what others owe you, and what looks done. |
-| `ayda-loop-sweep` | Goes through your open loops in small batches and records your verdict on each. |
-| `ayda-remember` | Keeps the decisions and commitments from a conversation as your own Ayda memories. |
+| `ayda-daily-brief` | Summarises what changed, what you owe, what others owe you, and what looks done. |
+| `ayda-loop-sweep` | Walks through your open loops in small batches and records your verdict on each. |
+| `ayda-remember` | Saves approved decisions and commitments from a conversation as your Ayda memories. |
 
-**When you need an answer you can trust**
+### Cited research and checks
 
 | Skill | What it does |
 | --- | --- |
-| `ayda-decision-trace` | Shows how and why a decision was made, and how it changed, with citations. |
-| `ayda-fact-check` | Checks a plan, document or change against recorded company facts. |
-| `ayda-onboarding` | Writes a cited brief on a role, team or project, with a reading list. |
-| `ayda-guide` | Holds the rules the other skills use: call cost, dates, conflicts between sources, Ayda's check of its own answer, and citations. |
+| `ayda-decision-trace` | Traces how and why a decision was made and how it changed, with citations. |
+| `ayda-fact-check` | Checks a plan, document, or change against recorded company facts. |
+| `ayda-onboarding` | Writes a cited brief on a role, team, or project with a reading list. |
+| `ayda-guide` | Shared rules for the other skills: call budget, dates, source conflicts, self-checks, and citations. |
 
-Claude selects a skill when your request fits it. In Claude Code you can also
-start one by name, for example `/ayda:ayda-daily-brief`. Name Ayda when you
-want something kept there ("save this to Ayda"): in Claude Code a plain
-"remember this" goes to Claude's own memory.
+Claude selects a skill when your prompt matches it. In Claude Code you can also
+invoke one directly (for example `/ayda:ayda-daily-brief`). Name Ayda explicitly
+when saving a memory ("save this to Ayda"), since a plain "remember this" writes
+to Claude's own memory.
 
 ## Try it
 
@@ -56,93 +70,84 @@ flowchart LR
   ayda --> sources[(Slack, Drive, Gmail, GitHub and more)]
 ```
 
-- Ayda runs in your company's own environment. Claude connects to the host
-  you give it, and the skills use that connection and no other.
-- You sign in with your company account. Ayda answers as you and shows only
-  the records you have access to.
-- Each answer comes with its sources, so you can open the record behind each
-  statement.
+- **Company-owned:** Claude connects only to the Ayda host you configure.
+- **Per-person access:** You sign in with your company account; Ayda returns
+  only records you are permitted to read.
+- **Verifiable:** Every statement cites its source record so you can open and
+  check it.
 
 ## Install
 
-You need a company Ayda installation with **Agent access** switched on by an
-admin, and its host name, for example `ayda.example.com`. If you do not know
-the host name, ask your Ayda admin.
+You need a company Ayda installation with **Agent access** enabled by an admin
+and its host name (for example `ayda.example.com`).
 
-**Claude Code**
+### Claude Code
 
 ```text
 /plugin marketplace add Ayda-Knowledge/ayda-plugin
 /plugin install ayda@ayda
 ```
 
-Then connect your installation, with your own host name in the URL:
+Connect your installation using your Ayda host name:
 
 ```bash
-claude mcp add --transport http --scope user ayda https://<your Ayda host>/mcp
+claude mcp add --transport http --scope user ayda https://<your-ayda-host>/mcp
 ```
 
-Claude opens a sign-in page the first time it calls Ayda.
+Claude opens a sign-in page on the first call to Ayda.
 
-**Claude apps (claude.ai, desktop and Cowork)**
+### Claude apps (`claude.ai`, Desktop, and Cowork)
 
-1. In **Customize > Plugins**, find **Ayda** in the directory and install it.
+1. Open **Customize > Plugins**, find **Ayda** in the directory, and install it.
 2. Connect your installation:
-   - If your organisation already has an Ayda connector, you are done. The
-     skills use it.
-   - Otherwise, in **Customize > Connectors**, add a custom connector named
-     `Ayda` with the URL `https://<your Ayda host>/mcp`, then sign in. On a
-     Team or Enterprise plan, an Owner can add it for the organisation.
+   - If your organisation already provides an Ayda connector, the skills use it.
+   - Otherwise, open **Customize > Connectors**, add a custom connector named
+     `Ayda` with URL `https://<your-ayda-host>/mcp`, and sign in. On Team or
+     Enterprise plans, an Owner can add it for the organisation.
 
-**Other agents**
+### Other agents
 
-The skills are plain `SKILL.md` folders. Copy the folders under
-[`plugin/skills/`](plugin/skills/) to your agent's skills directory, then connect your Ayda
-MCP server in that agent. Ayda's **Connect Your Agent** page shows how for
-each agent.
+The skills are standard `SKILL.md` folders. Copy the folders under
+[`plugin/skills/`](plugin/skills/) into your agent's skills directory, then
+connect your Ayda MCP server using Ayda's **Connect Your Agent** page.
 
 ## Data and privacy
 
-Claude sends your questions to your company's own Ayda installation, at
-the host you enter. It sends nothing to Ubundi or to any other service.
+Claude sends requests only to the Ayda installation host you configure—never to
+Ubundi or another service.
 
-Ayda can change only two things, and only after you say so:
+Skills write to Ayda only in two places, and only after your explicit approval:
 
-- `ayda-loop-sweep` records your verdict (open, done or dismissed) on one of
-  your own open loops.
-- `ayda-remember` stores a sentence you approve as your own memory record.
-  Ayda keeps the decisions it reads from that sentence pending until you
-  confirm them in Ayda.
+- `ayda-loop-sweep` records your verdict (`open`, `done`, or `dismissed`) on one
+  of your open loops.
+- `ayda-remember` stores an approved sentence as your personal memory record
+  (extracted decisions stay pending until you confirm them in Ayda).
 
-No skill writes to Slack, Google Drive, Gmail, GitHub or another source.
+No skill writes to Slack, Google Drive, Gmail, GitHub, or any other source.
 
 ## Evals
 
-The [`evals/`](evals/) suite checks the behaviour that matters: that the daily
-brief reads your day in your own time zone, that a sweep writes nothing
-before you decide, that instructions hidden in a record never cause a write,
-and that two sources that disagree are both shown.
+The [`evals/`](evals/) suite verifies core behaviour: reading your day in your
+time zone, writing nothing before your verdict, ignoring prompt injections in
+records, and showing conflicting sources side by side.
 
-`scripts/eval-compare.sh` runs each case against a mocked Ayda, once with the
-skills and once with the Ayda connection alone, so the difference is what the
-skills add. The latest scores are in [evals/RESULTS.md](evals/RESULTS.md).
+`scripts/eval-compare.sh` runs each case against a mocked Ayda with and without
+the skills so the delta measures what the skills add. Latest scores live in
+[evals/RESULTS.md](evals/RESULTS.md).
 
 ## Repository layout
 
-- [`plugin/`](plugin/) is the plugin itself: the manifest, icon and skills.
-  It is what Claude installs and what the Claude directory reads.
-- [`mod/`](mod/) is a Claude Code mod that draws open loops and source cards.
-  It is not installed: [AGENTS.md](AGENTS.md#the-claude-code-mod) says why and
-  how to bring it back.
-- [`evals/`](evals/) holds the eval suite.
-- Everything else, such as `scripts/`, CI and this README, supports its
-  development and is not installed.
+| Path | Holds |
+| --- | --- |
+| [`plugin/`](plugin/) | Installable plugin manifest, icon, and skills read by Claude |
+| [`mod/`](mod/) | Optional Claude Code mod for open loops and source cards (not installed; see [AGENTS.md](AGENTS.md#the-claude-code-mod)) |
+| [`evals/`](evals/) | Behavioural eval suite and recorded results |
+| `scripts/`, `.github/` | Validation scripts, CI, and development tooling (not installed) |
 
 ## Contributing
 
-Ideas for new skills and fixes are welcome. Read
-[CONTRIBUTING.md](CONTRIBUTING.md) first. To report a security problem, read
-[SECURITY.md](SECURITY.md).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a skill or fix. Report
+security issues through [SECURITY.md](SECURITY.md).
 
 ## Licence
 
